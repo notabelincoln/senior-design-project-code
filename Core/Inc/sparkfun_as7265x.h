@@ -136,7 +136,7 @@ void disableInterrupt();
 
 void softReset();
 
-boolean dataAvailable(); //Returns true when data is available
+uint8_t dataAvailable(); //Returns true when data is available
 
 //Returns the various calibration data
 float getCalibratedA();
@@ -192,6 +192,6 @@ uint8_t virtualReadRegister(uint8_t virtualAddr);
 void virtualWriteRegister(uint8_t virtualAddr, uint8_t dataToWrite);
 
 uint8_t readRegister(uint8_t addr);
-boolean writeRegister(uint8_t addr, uint8_t val);
+uint8_t writeRegister(uint8_t addr, uint8_t val);
 
 #endif
