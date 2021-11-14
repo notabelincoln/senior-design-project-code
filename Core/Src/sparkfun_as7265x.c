@@ -30,7 +30,7 @@
 //Initializes the sensor with basic settings
 //Returns false if sensor is not detected
 /*
-uint8_t begin(I2C_HandleTypeDef hi2c)
+uint8_t begin(I2C_HandleTypeDef *hi2c)
 {
 	uint8_t value;
 	uint8_t buffer;
@@ -601,36 +601,34 @@ uint8_t virtualReadRegister(uint8_t virtualAddr, I2C_HandleTypeDef *hi2c)
 }
 
 //Write to a virtual register in the AS726x
-/*
-void virtualWriteRegister(uint8_t virtualAddr, uint8_t dataToWrite)
+void virtualWriteRegister(uint8_t virtualAddr, uint8_t dataToWrite, I2C_HandleTypeDef *hi2c)
 {
 	uint8_t status;
 
 	//Wait for WRITE register to be empty
 	while (1)
 	{
-		status = readRegister(AS7265X_STATUS_REG);
+		status = readRegister(AS7265X_STATUS_REG, hi2c);
 		if ((status & AS7265X_TX_VALID) == 0)
 			break; // No inbound TX pending at slave. Okay to write now.
 		HAL_Delay(AS7265X_POLLING_DELAY);
 	}
 
 	// Send the virtual register address (setting bit 7 to indicate we are writing to a register).
-	writeRegister(AS7265X_WRITE_REG, (virtualAddr | 1 << 7));
+	writeRegister(AS7265X_WRITE_REG, (virtualAddr | 1 << 7), hi2c);
 
 	//Wait for WRITE register to be empty
 	while (1)
 	{
-		status = readRegister(AS7265X_STATUS_REG);
+		status = readRegister(AS7265X_STATUS_REG, hi2c);
 		if ((status & AS7265X_TX_VALID) == 0)
 			break; // No inbound TX pending at slave. Okay to write now.
 		HAL_Delay(AS7265X_POLLING_DELAY);
 	}
 
 	// Send the data to complete the operation.
-	writeRegister(AS7265X_WRITE_REG, dataToWrite);
+	writeRegister(AS7265X_WRITE_REG, dataToWrite, hi2c);
 }
-*/
 
 //Reads from a give location from the AS726x
 uint8_t readRegister(uint8_t addr, I2C_HandleTypeDef *hi2c)
