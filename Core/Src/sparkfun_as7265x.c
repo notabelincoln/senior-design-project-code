@@ -6,7 +6,7 @@
 
   Written by Nathan Seidle & Kevin Kuwata @ SparkFun Electronics, October 25th, 2018
 
-  Modified by Abraham Jordan to work with STM32F303K8
+  Modified by and with additions from Abraham Jordan to work with STM32F303K8
 
   The Spectral Triad is a three sensor platform to do 18-channel spectroscopy.
 
@@ -27,7 +27,7 @@
 #include "sparkfun_as7265x.h"
 #include <string.h>
 
-#ifdef _SPARKFUN_AS7265X_H
+
 //Initializes the sensor with basic settings
 //Returns false if sensor is not detected
 uint8_t begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
@@ -332,6 +332,58 @@ float convertBytesToFloat(uint32_t myLong)
 	return (myFloat);
 }
 
+// get all the data in one fell swoop
+void getDataBins(float *floatArray, I2C_HandleTypeDef *hi2c)
+{
+	uint8_t i;
+	uint8_t j;
+
+	uint8_t spectrum[3] = {
+			AS72653_UV,
+			AS72652_VISIBLE,
+			AS72651_NIR
+	};
+
+	uint8_t sensor[6] = {
+			AS7265X_R_G_A_CAL,
+			AS7265X_S_H_B_CAL,
+			AS7265X_T_I_C_CAL,
+			AS7265X_U_J_D_CAL,
+			AS7265X_V_K_E_CAL,
+			AS7265X_W_L_F_CAL
+	};
+
+	takeMeasurements(hi2c); //This is a hard wait while all 18 channels are measured
+
+	for (i = 0; i < 3; i++) {
+		for (j = 0; j < 6; j++) {
+			floatArray[6 * i + j] = getCalibratedValue(sensor[j], spectrum[i], hi2c);
+		}
+	}
+	/*
+	getCalibratedA()); //410nm
+
+	getCalibratedB()); //435nm
+
+	getCalibratedC()); //460nm
+	getCalibratedD()); //485nm
+	getCalibratedE()); //510nm
+	getCalibratedF()); //535nm
+	getCalibratedG()); //560nm
+	getCalibratedH()); //585nm
+	getCalibratedR()); //610nm
+	getCalibratedI()); //645nm
+	getCalibratedS()); //680nm
+	getCalibratedJ()); //705nm
+
+	getCalibratedT()); //730nm
+	getCalibratedU()); //760nm
+	getCalibratedV()); //810nm
+	getCalibratedW()); //860nm
+	getCalibratedK()); //900nm
+	getCalibratedL()); //940nm*/
+}
+
 //Mode 0: 4 channels out of 6 (see datasheet)
 //Mode 1: Different 4 channels out of 6 (see datasheet)
 //Mode 2: All 6 channels continuously
@@ -628,12 +680,11 @@ uint8_t writeRegister(uint8_t addr, uint8_t val, I2C_HandleTypeDef *hi2c)
 
 	ret = HAL_I2C_Master_Transmit(hi2c, AS7265X_ADDRS, buffer, sizeof(buffer), HAL_MAX_DELAY);
 	if (ret != HAL_OK)
-		return ret; //Device failed to ack
+		return (uint8_t)ret; //Device failed to ack
 
 	ret = HAL_I2C_Master_Receive(hi2c, AS7265X_ADDRS, buffer, sizeof(buffer), HAL_MAX_DELAY);
 	if (ret != HAL_OK)
-		return ret; //Device failed to ack
+		return (uint8_t)ret; //Device failed to ack
 
 	return 0;
 }
-#endif

@@ -31,8 +31,9 @@
 #ifndef _SPARKFUN_AS7265X_H
 #define _SPARKFUN_AS7265X_H
 
-#define AS7265X_ADDR 0x49 //7-bit unshifted default I2C Address
 #define AS7265X_ADDRS (AS7265X_ADDR << 1) // 7-bit shifted default I2C Address
+#define AS7265X_ADDR 0x49 //7-bit unshifted default I2C Address
+
 
 #define AS7265X_STATUS_REG 0x00
 #define AS7265X_WRITE_REG 0X01
@@ -189,6 +190,9 @@ uint16_t getW(I2C_HandleTypeDef *hi2c);
 uint16_t getChannel(uint8_t channelRegister, uint8_t device, I2C_HandleTypeDef *hi2c);
 float getCalibratedValue(uint8_t calAddress, uint8_t devic, I2C_HandleTypeDef *hi2ce);
 float convertBytesToFloat(uint32_t myLong);
+
+// get all the data in one fell swoop
+void getDataBins(float *floatArray, I2C_HandleTypeDef *hi2c);
 
 void selectDevice(uint8_t device, I2C_HandleTypeDef *hi2c); //Change between the x51, x52, or x53 for data and settings
 
