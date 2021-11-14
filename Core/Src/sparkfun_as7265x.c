@@ -74,20 +74,20 @@ uint8_t begin(I2C_HandleTypeDef *hi2c)
 */
 /*
 
-uint8_t getDeviceType()
+uint8_t getDeviceType(I2C_HandleTypeDef *hi2c)
 {
 	return (virtualReadRegister(AS7265X_HW_VERSION_HIGH));
 }
 */
 /*
-uint8_t getHardwareVersion()
+uint8_t getHardwareVersion(I2C_HandleTypeDef *hi2c)
 {
 	return (virtualReadRegister(AS7265X_HW_VERSION_LOW));
 }
 */
 
 /*
-uint8_t getMajorFirmwareVersion()
+uint8_t getMajorFirmwareVersion(I2C_HandleTypeDef *hi2c)
 {
 	virtualWriteRegister(AS7265X_FW_VERSION_HIGH, 0x01); //Set to 0x01 for Major
 	virtualWriteRegister(AS7265X_FW_VERSION_LOW, 0x01);  //Set to 0x01 for Major
@@ -97,7 +97,7 @@ uint8_t getMajorFirmwareVersion()
 */
 
 /*
-uint8_t getPatchFirmwareVersion()
+uint8_t getPatchFirmwareVersion(I2C_HandleTypeDef *hi2c)
 {
 	virtualWriteRegister(AS7265X_FW_VERSION_HIGH, 0x02); //Set to 0x02 for Patch
 	virtualWriteRegister(AS7265X_FW_VERSION_LOW, 0x02);  //Set to 0x02 for Patch
@@ -107,7 +107,7 @@ uint8_t getPatchFirmwareVersion()
 */
 
 /*
-uint8_t getBuildFirmwareVersion()
+uint8_t getBuildFirmwareVersion(I2C_HandleTypeDef *hi2c)
 {
 	virtualWriteRegister(AS7265X_FW_VERSION_HIGH, 0x03); //Set to 0x03 for Build
 	virtualWriteRegister(AS7265X_FW_VERSION_LOW, 0x03);  //Set to 0x03 for Build
@@ -118,7 +118,7 @@ uint8_t getBuildFirmwareVersion()
 
 //Tells IC to take all channel measurements and polls for data ready flag
 /*
-void takeMeasurements()
+void takeMeasurements(I2C_HandleTypeDef *hi2c)
 {
 	setMeasurementMode(AS7265X_MEASUREMENT_MODE_6CHAN_ONE_SHOT); //Set mode to all 6-channels, one-shot
 
@@ -132,7 +132,7 @@ void takeMeasurements()
 
 //Turns on all bulbs, takes measurements of all channels, turns off all bulbs
 /*
-void takeMeasurementsWithBulb()
+void takeMeasurementsWithBulb(I2C_HandleTypeDef *hi2c)
 {
 	enableBulb(AS7265x_LED_WHITE);
 	enableBulb(AS7265x_LED_IR);
@@ -148,79 +148,79 @@ void takeMeasurementsWithBulb()
 
 //Get the various color readings
 /*
-uint16_t getG()
+uint16_t getG(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_R_G_A, AS72652_VISIBLE));
 }
-uint16_t getH()
+uint16_t getH(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_S_H_B, AS72652_VISIBLE));
 }
-uint16_t getI()
+uint16_t getI(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_T_I_C, AS72652_VISIBLE));
 }
-uint16_t getJ()
+uint16_t getJ(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_U_J_D, AS72652_VISIBLE));
 }
-uint16_t getK()
+uint16_t getK(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_V_K_E, AS72652_VISIBLE));
 }
-uint16_t getL()
+uint16_t getL(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_W_L_F, AS72652_VISIBLE));
 }
 
 //Get the various NIR readings
-uint16_t getR()
+uint16_t getR(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_R_G_A, AS72651_NIR));
 }
-uint16_t getS()
+uint16_t getS(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_S_H_B, AS72651_NIR));
 }
-uint16_t getT()
+uint16_t getT(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_T_I_C, AS72651_NIR));
 }
-uint16_t getU()
+uint16_t getU(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_U_J_D, AS72651_NIR));
 }
-uint16_t getV()
+uint16_t getV(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_V_K_E, AS72651_NIR));
 }
-uint16_t getW()
+uint16_t getW(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_W_L_F, AS72651_NIR));
 }
 
 //Get the various UV readings
-uint16_t getA()
+uint16_t getA(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_R_G_A, AS72653_UV));
 }
-uint16_t getB()
+uint16_t getB(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_S_H_B, AS72653_UV));
 }
-uint16_t getC()
+uint16_t getC(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_T_I_C, AS72653_UV));
 }
-uint16_t getD()
+uint16_t getD(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_U_J_D, AS72653_UV));
 }
-uint16_t getE()
+uint16_t getE(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_V_K_E, AS72653_UV));
 }
-uint16_t getF()
+uint16_t getF(I2C_HandleTypeDef *hi2c)
 {
 	return (getChannel(AS7265X_W_L_F, AS72653_UV));
 }
@@ -228,7 +228,7 @@ uint16_t getF()
 
 //A the 16-bit value stored in a given channel registerReturns
 /*
-uint16_t getChannel(uint8_t channelRegister, uint8_t device)
+uint16_t getChannel(uint8_t channelRegister, uint8_t device, I2C_HandleTypeDef *hi2c)
 {
 	selectDevice(device);
 	uint16_t colorData = virtualReadRegister(channelRegister) << 8; //High uint8_t
@@ -239,78 +239,78 @@ uint16_t getChannel(uint8_t channelRegister, uint8_t device)
 
 //Returns the various calibration data
 /*
-float getCalibratedA()
+float getCalibratedA(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_R_G_A_CAL, AS72653_UV));
 }
-float getCalibratedB()
+float getCalibratedB(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_S_H_B_CAL, AS72653_UV));
 }
-float getCalibratedC()
+float getCalibratedC(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_T_I_C_CAL, AS72653_UV));
 }
-float getCalibratedD()
+float getCalibratedD(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_U_J_D_CAL, AS72653_UV));
 }
-float getCalibratedE()
+float getCalibratedE(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_V_K_E_CAL, AS72653_UV));
 }
-float getCalibratedF()
+float getCalibratedF(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_W_L_F_CAL, AS72653_UV));
 }
 
 //Returns the various calibration data
-float getCalibratedG()
+float getCalibratedG(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_R_G_A_CAL, AS72652_VISIBLE));
 }
-float getCalibratedH()
+float getCalibratedH(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_S_H_B_CAL, AS72652_VISIBLE));
 }
-float getCalibratedI()
+float getCalibratedI(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_T_I_C_CAL, AS72652_VISIBLE));
 }
-float getCalibratedJ()
+float getCalibratedJ(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_U_J_D_CAL, AS72652_VISIBLE));
 }
-float getCalibratedK()
+float getCalibratedK(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_V_K_E_CAL, AS72652_VISIBLE));
 }
-float getCalibratedL()
+float getCalibratedL(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_W_L_F_CAL, AS72652_VISIBLE));
 }
 
-float getCalibratedR()
+float getCalibratedR(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_R_G_A_CAL, AS72651_NIR));
 }
-float getCalibratedS()
+float getCalibratedS(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_S_H_B_CAL, AS72651_NIR));
 }
-float getCalibratedT()
+float getCalibratedT(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_T_I_C_CAL, AS72651_NIR));
 }
-float getCalibratedU()
+float getCalibratedU(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_U_J_D_CAL, AS72651_NIR));
 }
-float getCalibratedV()
+float getCalibratedV(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_V_K_E_CAL, AS72651_NIR));
 }
-float getCalibratedW()
+float getCalibratedW(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_W_L_F_CAL, AS72651_NIR));
 }
@@ -318,7 +318,7 @@ float getCalibratedW()
 
 //Given an address, read four bytes and return the floating point calibrated value
 /*
-float getCalibratedValue(uint8_t calAddress, uint8_t device)
+float getCalibratedValue(uint8_t calAddress, uint8_t device, I2C_HandleTypeDef *hi2c)
 {
 	selectDevice(device);
 
@@ -354,7 +354,7 @@ float convertBytesToFloat(uint32_t myLong)
 //Mode 2: All 6 channels continuously
 //Mode 3: One-shot reading of all channels
 /*
-void setMeasurementMode(uint8_t mode)
+void setMeasurementMode(uint8_t mode, I2C_HandleTypeDef *hi2c)
 {
 	if (mode > 0x03)
 		mode = 0x03; //Error check
@@ -368,12 +368,12 @@ void setMeasurementMode(uint8_t mode)
 */
 
 //Sets the gain value
-//Gain 0: 1x (power-on default)
+//Gain 0: 1x (power-on default, I2C_HandleTypeDef *hi2c)
 //Gain 1: 3.7x
 //Gain 2: 16x
 //Gain 3: 64x
 /*
-void setGain(uint8_t gain)
+void setGain(uint8_t gain, I2C_HandleTypeDef *hi2c)
 {
 	if (gain > 0x3)
 		gain = 0x3;
@@ -390,14 +390,14 @@ void setGain(uint8_t gain)
 //Give this function a byte from 0 to 255.
 //Time will be 2.8ms * [integration cycles + 1]
 /*
-void setIntegrationCycles(uint8_t cycleValue)
+void setIntegrationCycles(uint8_t cycleValue, I2C_HandleTypeDef *hi2c)
 {
 	virtualWriteRegister(AS7265X_INTERGRATION_TIME, cycleValue); //Write
 }
 */
 
 /*
-void enableInterrupt()
+void enableInterrupt(I2C_HandleTypeDef *hi2c)
 {
 	//Read, mask/set, write
 	uint8_t value = virtualReadRegister(AS7265X_CONFIG); //Read
@@ -408,7 +408,7 @@ void enableInterrupt()
 
 //Disables the interrupt pin
 /*
-void disableInterrupt()
+void disableInterrupt(I2C_HandleTypeDef *hi2c)
 {
 	//Read, mask/set, write
 	uint8_t value = virtualReadRegister(AS7265X_CONFIG); //Read
@@ -419,7 +419,7 @@ void disableInterrupt()
 
 //Checks to see if DRDY flag is set in the control setup register
 /*
-uint8_t dataAvailable()
+uint8_t dataAvailable(I2C_HandleTypeDef *hi2c)
 {
 	uint8_t value = virtualReadRegister(AS7265X_CONFIG);
 	return (value & (1 << 1)); //Bit 1 is DATA_RDY
@@ -428,7 +428,7 @@ uint8_t dataAvailable()
 
 //Enable the LED or bulb on a given device
 /*
-void enableBulb(uint8_t device)
+void enableBulb(uint8_t device, I2C_HandleTypeDef *hi2c)
 {
 	selectDevice(device);
 
@@ -441,7 +441,7 @@ void enableBulb(uint8_t device)
 
 //Disable the LED or bulb on a given device
 /*
-void disableBulb(uint8_t device)
+void disableBulb(uint8_t device, I2C_HandleTypeDef *hi2c)
 {
 	selectDevice(device);
 
@@ -458,7 +458,7 @@ void disableBulb(uint8_t device)
 //Current 2: 50mA
 //Current 3: 100mA
 /*
-void setBulbCurrent(uint8_t current, uint8_t device)
+void setBulbCurrent(uint8_t current, uint8_t device, I2C_HandleTypeDef *hi2c)
 {
 	selectDevice(device);
 
@@ -474,7 +474,7 @@ void setBulbCurrent(uint8_t current, uint8_t device)
 
 //As we read various registers we have to point at the master or first/second slave
 /*
-void selectDevice(uint8_t device)
+void selectDevice(uint8_t device, I2C_HandleTypeDef *hi2c)
 {
 	//Set the bits 0:1. Just overwrite whatever is there because masking in the correct value doesn't work.
 	virtualWriteRegister(AS7265X_DEV_SELECT_CONTROL, device);
@@ -489,7 +489,7 @@ void selectDevice(uint8_t device)
 
 //Enable the onboard indicator LED
 /*
-void enableIndicator()
+void enableIndicator(I2C_HandleTypeDef *hi2c)
 {
 	selectDevice(AS72651_NIR);
 
@@ -503,7 +503,7 @@ void enableIndicator()
 
 //Disable the onboard indicator LED
 /*
-void disableIndicator()
+void disableIndicator(I2C_HandleTypeDef *hi2c)
 {
 	selectDevice(AS72651_NIR);
 
@@ -517,7 +517,7 @@ void disableIndicator()
 
 //Set the current limit of onboard LED. Default is max 8mA = 0x03.
 /*
-void setIndicatorCurrent(uint8_t current)
+void setIndicatorCurrent(uint8_t current, I2C_HandleTypeDef *hi2c)
 {
 	selectDevice(AS72651_NIR);
 
@@ -534,7 +534,7 @@ void setIndicatorCurrent(uint8_t current)
 
 //Returns the temperature of a given device in C
 /*
-uint8_t getTemperature(uint8_t deviceNumber)
+uint8_t getTemperature(uint8_t deviceNumber, I2C_HandleTypeDef *hi2c)
 {
 	selectDevice(deviceNumber);
 	return (virtualReadRegister(AS7265X_DEVICE_TEMP));
@@ -543,7 +543,7 @@ uint8_t getTemperature(uint8_t deviceNumber)
 
 //Returns an average of all the sensor temps in C
 /*
-float getTemperatureAverage()
+float getTemperatureAverage(I2C_HandleTypeDef *hi2c)
 {
 	float average = 0;
 
@@ -557,7 +557,7 @@ float getTemperatureAverage()
 //Does a soft reset
 //Give sensor at least 1000ms to reset
 /*
-void softReset()
+void softReset(I2C_HandleTypeDef *hi2c)
 {
 	//Read, mask/set, write
 	uint8_t value = virtualReadRegister(AS7265X_CONFIG); //Read

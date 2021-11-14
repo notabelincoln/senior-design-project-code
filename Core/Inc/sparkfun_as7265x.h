@@ -110,37 +110,37 @@
 #define AS7265X_MEASUREMENT_MODE_6CHAN_CONTINUOUS 0x02
 #define AS7265X_MEASUREMENT_MODE_6CHAN_ONE_SHOT 0x03
 
-uint8_t getDeviceType();
-uint8_t getHardwareVersion();
-uint8_t getMajorFirmwareVersion();
-uint8_t getPatchFirmwareVersion();
-uint8_t getBuildFirmwareVersion();
+uint8_t getDeviceType(I2C_HandleTypeDef *hi2c);
+uint8_t getHardwareVersion(I2C_HandleTypeDef *hi2c);
+uint8_t getMajorFirmwareVersion(I2C_HandleTypeDef *hi2c);
+uint8_t getPatchFirmwareVersion(I2C_HandleTypeDef *hi2c);
+uint8_t getBuildFirmwareVersion(I2C_HandleTypeDef *hi2c);
 
 // uint8_t getTemperature(uint8_t deviceNumber = 0); //Get temp in C of the master IC
-float getTemperatureAverage();                    //Get average of all three ICs
+float getTemperatureAverage(I2C_HandleTypeDef *hi2c);                    //Get average of all three ICs
 
-void takeMeasurements();
-void takeMeasurementsWithBulb();
+void takeMeasurements(I2C_HandleTypeDef *hi2c);
+void takeMeasurementsWithBulb(I2C_HandleTypeDef *hi2c);
 
-void enableIndicator(); //Blue status LED
-void disableIndicator();
+void enableIndicator(I2C_HandleTypeDef *hi2c); //Blue status LED
+void disableIndicator(I2C_HandleTypeDef *hi2c);
 
-void enableBulb(uint8_t device);
-void disableBulb(uint8_t device);
+void enableBulb(uint8_t device, I2C_HandleTypeDef *hi2c);
+void disableBulb(uint8_t device, I2C_HandleTypeDef *hi2c);
 
-void setGain(uint8_t gain);            //1 to 64x
-void setMeasurementMode(uint8_t mode); //4 channel, other 4 channel, 6 chan, or 6 chan one shot
-void setIntegrationCycles(uint8_t cycleValue);
+void setGain(uint8_t gain, I2C_HandleTypeDef *hi2c);            //1 to 64x
+void setMeasurementMode(uint8_t mode, I2C_HandleTypeDef *hi2c); //4 channel, other 4 channel, 6 chan, or 6 chan one shot
+void setIntegrationCycles(uint8_t cycleValue, I2C_HandleTypeDef *hi2c);
 
-void setBulbCurrent(uint8_t current, uint8_t device); //
-void setIndicatorCurrent(uint8_t current);            //0 to 8mA
+void setBulbCurrent(uint8_t current, uint8_t device, I2C_HandleTypeDef *hi2c); //
+void setIndicatorCurrent(uint8_t current, I2C_HandleTypeDef *hi2c);            //0 to 8mA
 
-void enableInterrupt();
-void disableInterrupt();
+void enableInterrupt(I2C_HandleTypeDef *hi2c);
+void disableInterrupt(I2C_HandleTypeDef *hi2c);
 
-void softReset();
+void softReset(I2C_HandleTypeDef *hi2c);
 
-uint8_t dataAvailable(); //Returns true when data is available
+uint8_t dataAvailable(I2C_HandleTypeDef *hi2c); //Returns true when data is available
 
 //Returns the various calibration data
 float getCalibratedA();
@@ -165,32 +165,36 @@ float getCalibratedV();
 float getCalibratedW();
 
 //Get the various raw readings
-uint16_t getA();
-uint16_t getB();
-uint16_t getC();
-uint16_t getD();
-uint16_t getE();
-uint16_t getF();
+uint16_t getA(I2C_HandleTypeDef *hi2c);
+uint16_t getB(I2C_HandleTypeDef *hi2c);
+uint16_t getC(I2C_HandleTypeDef *hi2c);
+uint16_t getD(I2C_HandleTypeDef *hi2c);
+uint16_t getE(I2C_HandleTypeDef *hi2c);
+uint16_t getF(I2C_HandleTypeDef *hi2c);
 
-uint16_t getG();
-uint16_t getH();
-uint16_t getI();
-uint16_t getJ();
-uint16_t getK();
-uint16_t getL();
+uint16_t getG(I2C_HandleTypeDef *hi2c);
+uint16_t getH(I2C_HandleTypeDef *hi2c);
+uint16_t getI(I2C_HandleTypeDef *hi2c);
+uint16_t getJ(I2C_HandleTypeDef *hi2c);
+uint16_t getK(I2C_HandleTypeDef *hi2c);
+uint16_t getL(I2C_HandleTypeDef *hi2c);
 
-uint16_t getR();
-uint16_t getS();
-uint16_t getT();
-uint16_t getU();
-uint16_t getV();
-uint16_t getW();
+uint16_t getR(I2C_HandleTypeDef *hi2c);
+uint16_t getS(I2C_HandleTypeDef *hi2c);
+uint16_t getT(I2C_HandleTypeDef *hi2c);
+uint16_t getU(I2C_HandleTypeDef *hi2c);
+uint16_t getV(I2C_HandleTypeDef *hi2c);
+uint16_t getW(I2C_HandleTypeDef *hi2c);
 
-uint16_t getChannel(uint8_t channelRegister, uint8_t device);
-float getCalibratedValue(uint8_t calAddress, uint8_t device);
-float convertBytesToFloat(uint32_t myLong);
+uint16_t getChannel(uint8_t channelRegister, uint8_t device, I2C_HandleTypeDef *hi2c);
+float getCalibratedValue(uint8_t calAddress, uint8_t devic, I2C_HandleTypeDef *hi2ce);
+float convertBytesToFloat(uint32_t myLong, I2C_HandleTypeDef *hi2c);
 
-void selectDevice(uint8_t device); //Change between the x51, x52, or x53 for data and settings
+void selectDevice(uint8_t device, I2C_HandleTypeDef *hi2c); //Change between the x51, x52, or x53 for data and settings
+
+uint8_t getTemperature(uint8_t deviceNumber, I2C_HandleTypeDef *hi2c);
+float getTemperatureAverage(I2C_HandleTypeDef *hi2c);
+void softReset(I2C_HandleTypeDef *hi2c);
 
 uint8_t virtualReadRegister(uint8_t virtualAddr, I2C_HandleTypeDef *hi2c);
 void virtualWriteRegister(uint8_t virtualAddr, uint8_t dataToWrite, I2C_HandleTypeDef *hi2c);
