@@ -33,14 +33,14 @@
 uint8_t begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
 {
 	uint8_t value;
-	uint8_t buffer;
+	uint8_t buffer[64];
 	HAL_StatusTypeDef ret;
 
 	ret = HAL_I2C_IsDeviceReady(hi2c, AS7265X_ADDR << 1, 2, HAL_MAX_DELAY);
 	if (ret != HAL_OK) {
-		strcpy((char *)buffer, "Sensor array not found");
-		HAL_UART_Transmit(huart, (char *)&buffer, strlen((char *)buffer), HAL_MAX_DELAY);
-		return ret;
+		strcpy((char *)buffer, "Sensor array not found\r\n");
+		HAL_UART_Transmit(huart, (char *)buffer, strlen((char *)buffer), HAL_MAX_DELAY);
+		return (uint8_t)ret;
 	} //Check for sensor presence
 
 	//Check to see if both slaves are detected
@@ -68,7 +68,7 @@ uint8_t begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
 
 	enableInterrupt(hi2c);
 
-	return (true); //We're all setup!
+	return 0; //We're all setup!
 }
 
 uint8_t getDeviceType(I2C_HandleTypeDef *hi2c)
@@ -110,7 +110,7 @@ void takeMeasurements(I2C_HandleTypeDef *hi2c)
 	setMeasurementMode(AS7265X_MEASUREMENT_MODE_6CHAN_ONE_SHOT, hi2c); //Set mode to all 6-channels, one-shot
 
 	//Wait for data to be ready
-	while (dataAvailable() == false)
+	while (dataAvailable(hi2c) == 0)
 		HAL_Delay(AS7265X_POLLING_DELAY);
 
 	//Readings can now be accessed via getCalibratedA(), getJ(), etc
@@ -123,7 +123,7 @@ void takeMeasurementsWithBulb(I2C_HandleTypeDef *hi2c)
 	enableBulb(AS7265x_LED_IR, hi2c);
 	enableBulb(AS7265x_LED_UV, hi2c);
 
-	takeMeasurements();
+	takeMeasurements(hi2c);
 
 	disableBulb(AS7265x_LED_WHITE, hi2c); //Turn off bulb to avoid heating sensor
 	disableBulb(AS7265x_LED_IR, hi2c);
@@ -211,7 +211,7 @@ uint16_t getF(I2C_HandleTypeDef *hi2c)
 //A the 16-bit value stored in a given channel registerReturns
 uint16_t getChannel(uint8_t channelRegister, uint8_t device, I2C_HandleTypeDef *hi2c)
 {
-	selectDevice(device);
+	selectDevice(device, hi2c);
 	uint16_t colorData = virtualReadRegister(channelRegister, hi2c) << 8; //High uint8_t
 	colorData |= virtualReadRegister(channelRegister + 1, hi2c);          //Low uint8_t
 	return (colorData);
@@ -422,7 +422,7 @@ void setBulbCurrent(uint8_t current, uint8_t device, I2C_HandleTypeDef *hi2c)
 	// set the current
 	if (current > 0x03)
 		current = 0x03;                                        //Limit to two bits
-	uint8_t value = virtualReadRegister(AS7265X_LED_CONFIG); //Read
+	uint8_t value = virtualReadRegister(AS7265X_LED_CONFIG, hi2c); //Read
 	value &= 0xCF;                                     //Clear ICL_DRV bits
 	value |= (current << 4);                                 //Set ICL_DRV bits with user's choice
 	virtualWriteRegister(AS7265X_LED_CONFIG, value, hi2c);         //Write
