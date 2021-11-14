@@ -25,10 +25,14 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdint.h>
+#include "main.h"
+
 #ifndef _SPARKFUN_AS7265X_H
 #define _SPARKFUN_AS7265X_H
 
 #define AS7265X_ADDR 0x49 //7-bit unshifted default I2C Address
+#define AS7265X_ADDRS (AS7265X_ADDR << 1) // 7-bit shifted default I2C Address
 
 #define AS7265X_STATUS_REG 0x00
 #define AS7265X_WRITE_REG 0X01
@@ -191,7 +195,7 @@ void selectDevice(uint8_t device); //Change between the x51, x52, or x53 for dat
 uint8_t virtualReadRegister(uint8_t virtualAddr);
 void virtualWriteRegister(uint8_t virtualAddr, uint8_t dataToWrite);
 
-uint8_t readRegister(uint8_t addr);
+uint8_t readRegister(uint8_t addr, I2C_HandleTypeDef *hi2c);
 uint8_t writeRegister(uint8_t addr, uint8_t val);
 
 #endif
