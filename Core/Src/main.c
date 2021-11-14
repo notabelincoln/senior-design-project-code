@@ -74,11 +74,12 @@ int main(void)
 {
 	/* USER CODE BEGIN 1 */
 	uint8_t buffer[32];
-	uint8_t buffer_i2c[16];
-	uint8_t buffer_uart[128];
+	uint8_t i;
 
 	uint8_t value;
-	float final_val;
+
+	float sensor_data[18];
+
 
 	HAL_StatusTypeDef ret;
 	/* USER CODE END 1 */
@@ -89,7 +90,6 @@ int main(void)
 	HAL_Init();
 
 	/* USER CODE BEGIN Init */
-
 	/* USER CODE END Init */
 
 	/* Configure the system clock */
@@ -106,13 +106,20 @@ int main(void)
 	MX_SPI1_Init();
 	MX_I2C1_Init();
 	/* USER CODE BEGIN 2 */
-	value = begin(hi2c1, huart2);
+	value = begin(&hi2c1, &huart2);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1)
 	{
+		getDataBins(sensor_data, &hi2c1);
+		HAL_Delay(10);
+		for (i = 0; i < 18; i++) {
+			sprintf((char *)buffer, "%d nm: %0.3f\r\n", 410 + 25 * i, sensor_data[i]);
+			HAL_UART_Transmit(&huart2, (char *)buffer, strlen((char *)buffer), HAL_MAX_DELAY);
+			HAL_Delay(100);
+		}
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */

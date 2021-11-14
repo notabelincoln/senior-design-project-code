@@ -25,27 +25,28 @@
  */
 
 #include "sparkfun_as7265x.h"
+#include <stdio.h>
 #include <string.h>
-
 
 //Initializes the sensor with basic settings
 //Returns false if sensor is not detected
 uint8_t begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
 {
 	uint8_t value;
-	uint8_t buffer[128];
+	char sensor_status[32];
+	char buffer[128];
 	HAL_StatusTypeDef ret;
 
 	ret = HAL_I2C_IsDeviceReady(hi2c, AS7265X_ADDRS, 2, HAL_MAX_DELAY);
 	if (ret != HAL_OK) {
-		strcpy((char *)buffer, "Sensor array not found");
+		strcpy(sensor_status, "Sensor array not found");
 	}  else { //Check for sensor presence
-		strcpy((char *)buffer, "Sensor found");
-		sprintf((char *)buffer, "0x%x - %s\r\n", ret, (char *)buffer);
+		strcpy(sensor_status, "Sensor found");
 	} //Check for sensor presence
 
-	HAL_UART_Transmit(huart, (char *)buffer, strlen((char *)buffer), HAL_MAX_DELAY);
+	sprintf(buffer, "0x%x - %s\r\n", (uint8_t)ret, sensor_status);
 
+	ret = HAL_UART_Transmit(huart, (char *)buffer, (size_t)strlen(buffer), HAL_MAX_DELAY);
 	if (ret != HAL_OK)
 		return (uint8_t)ret;
 
@@ -390,11 +391,12 @@ void getDataBins(float *floatArray, I2C_HandleTypeDef *hi2c)
 //Mode 3: One-shot reading of all channels
 void setMeasurementMode(uint8_t mode, I2C_HandleTypeDef *hi2c)
 {
+	uint8_t value;
 	if (mode > 0x03)
 		mode = 0x03; //Error check
 
 	//Read, mask/set, write
-	uint8_t value = virtualReadRegister(AS7265X_CONFIG, hi2c); //Read
+	value = virtualReadRegister(AS7265X_CONFIG, hi2c); //Read
 	value &= 0xF3;                                 //Clear BANK bits
 	value |= (mode << 2);                                //Set BANK bits with user's choice
 	virtualWriteRegister(AS7265X_CONFIG, value, hi2c);         //Write
@@ -613,8 +615,11 @@ uint8_t virtualReadRegister(uint8_t virtualAddr, I2C_HandleTypeDef *hi2c)
 	writeRegister(AS7265X_WRITE_REG, virtualAddr, hi2c);
 
 	//Wait for READ flag to be set
-	while (!(readRegister(AS7265X_STATUS_REG, hi2c) & AS7265X_RX_VALID))
+	while (1)
 	{
+		status = readRegister(AS7265X_STATUS_REG, hi2c);
+		if ((status & AS7265X_RX_VALID) != 0)
+			break;
 		HAL_Delay(AS7265X_POLLING_DELAY);
 	}
 
