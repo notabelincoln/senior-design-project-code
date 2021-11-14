@@ -33,7 +33,7 @@
 uint8_t begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
 {
 	uint8_t value;
-	uint8_t buffer[64];
+	uint8_t buffer[128];
 	HAL_StatusTypeDef ret;
 
 	ret = HAL_I2C_IsDeviceReady(hi2c, AS7265X_ADDRS, 2, HAL_MAX_DELAY);
@@ -217,13 +217,14 @@ uint16_t getF(I2C_HandleTypeDef *hi2c)
 //A the 16-bit value stored in a given channel registerReturns
 uint16_t getChannel(uint8_t channelRegister, uint8_t device, I2C_HandleTypeDef *hi2c)
 {
+	uint16_t colorData;
 	selectDevice(device, hi2c);
-	uint16_t colorData = virtualReadRegister(channelRegister, hi2c) << 8; //High uint8_t
+	colorData = virtualReadRegister(channelRegister, hi2c) << 8; //High uint8_t
 	colorData |= virtualReadRegister(channelRegister + 1, hi2c);          //Low uint8_t
 	return (colorData);
 }
 
-//Returns the various calibration data
+//Returns various calibrated UV spectra data
 float getCalibratedA(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_R_G_A_CAL, AS72653_UV, hi2c));
@@ -249,7 +250,7 @@ float getCalibratedF(I2C_HandleTypeDef *hi2c)
 	return (getCalibratedValue(AS7265X_W_L_F_CAL, AS72653_UV, hi2c));
 }
 
-//Returns the various calibration data
+//Returns various calibrated visible spectra data
 float getCalibratedG(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_R_G_A_CAL, AS72652_VISIBLE, hi2c));
@@ -275,6 +276,7 @@ float getCalibratedL(I2C_HandleTypeDef *hi2c)
 	return (getCalibratedValue(AS7265X_W_L_F_CAL, AS72652_VISIBLE, hi2c));
 }
 
+//Get the various calibrated NIR spectra data
 float getCalibratedR(I2C_HandleTypeDef *hi2c)
 {
 	return (getCalibratedValue(AS7265X_R_G_A_CAL, AS72651_NIR, hi2c));
@@ -303,16 +305,17 @@ float getCalibratedW(I2C_HandleTypeDef *hi2c)
 //Given an address, read four bytes and return the floating point calibrated value
 float getCalibratedValue(uint8_t calAddress, uint8_t device, I2C_HandleTypeDef *hi2c)
 {
+	uint8_t b0, b1, b2, b3;
+	uint32_t calBytes = 0;
+
 	selectDevice(device, hi2c);
 
-	uint8_t b0, b1, b2, b3;
 	b0 = virtualReadRegister(calAddress + 0, hi2c);
 	b1 = virtualReadRegister(calAddress + 1, hi2c);
 	b2 = virtualReadRegister(calAddress + 2, hi2c);
 	b3 = virtualReadRegister(calAddress + 3, hi2c);
 
 	//Channel calibrated values are stored big-endian
-	uint32_t calBytes = 0;
 	calBytes |= ((uint32_t)b0 << (8 * 3));
 	calBytes |= ((uint32_t)b1 << (8 * 2));
 	calBytes |= ((uint32_t)b2 << (8 * 1));
@@ -352,8 +355,8 @@ void setMeasurementMode(uint8_t mode, I2C_HandleTypeDef *hi2c)
 //Gain 3: 64x
 void setGain(uint8_t gain, I2C_HandleTypeDef *hi2c)
 {
-	if (gain > 0x3)
-		gain = 0x3;
+	if (gain > 0x03)
+		gain = 0x03;
 
 	//Read, mask/set, write
 	uint8_t value = virtualReadRegister(AS7265X_CONFIG, hi2c); //Read
@@ -372,8 +375,10 @@ void setIntegrationCycles(uint8_t cycleValue, I2C_HandleTypeDef *hi2c)
 
 void enableInterrupt(I2C_HandleTypeDef *hi2c)
 {
+	uint8_t value;
+
 	//Read, mask/set, write
-	uint8_t value = virtualReadRegister(AS7265X_CONFIG, hi2c); //Read
+	value = virtualReadRegister(AS7265X_CONFIG, hi2c); //Read
 	value |= (1 << 6);                                   //Set INT bit
 	virtualWriteRegister(AS7265X_CONFIG, value, hi2c);         //Write
 }
@@ -381,8 +386,10 @@ void enableInterrupt(I2C_HandleTypeDef *hi2c)
 //Disables the interrupt pin
 void disableInterrupt(I2C_HandleTypeDef *hi2c)
 {
+	uint8_t value;
+
 	//Read, mask/set, write
-	uint8_t value = virtualReadRegister(AS7265X_CONFIG, hi2c); //Read
+	value = virtualReadRegister(AS7265X_CONFIG, hi2c); //Read
 	value &= ~(1 << 6);                                  //Clear INT bit
 	virtualWriteRegister(AS7265X_CONFIG, value, hi2c);         //Write
 }
@@ -390,17 +397,20 @@ void disableInterrupt(I2C_HandleTypeDef *hi2c)
 //Checks to see if DRDY flag is set in the control setup register
 uint8_t dataAvailable(I2C_HandleTypeDef *hi2c)
 {
-	uint8_t value = virtualReadRegister(AS7265X_CONFIG, hi2c);
+	uint8_t value;
+	value = virtualReadRegister(AS7265X_CONFIG, hi2c);
 	return (value & (1 << 1)); //Bit 1 is DATA_RDY
 }
 
 //Enable the LED or bulb on a given device
 void enableBulb(uint8_t device, I2C_HandleTypeDef *hi2c)
 {
+	uint8_t value;
+
 	selectDevice(device, hi2c);
 
 	//Read, mask/set, write
-	uint8_t value = virtualReadRegister(AS7265X_LED_CONFIG, hi2c);
+	value = virtualReadRegister(AS7265X_LED_CONFIG, hi2c);
 	value |= (1 << 3); //Set the bit
 	virtualWriteRegister(AS7265X_LED_CONFIG, value, hi2c);
 }
@@ -408,10 +418,12 @@ void enableBulb(uint8_t device, I2C_HandleTypeDef *hi2c)
 //Disable the LED or bulb on a given device
 void disableBulb(uint8_t device, I2C_HandleTypeDef *hi2c)
 {
+	uint8_t value;
+
 	selectDevice(device, hi2c);
 
 	//Read, mask/set, write
-	uint8_t value = virtualReadRegister(AS7265X_LED_CONFIG, hi2c);
+	value = virtualReadRegister(AS7265X_LED_CONFIG, hi2c);
 	value &= ~(1 << 3); //Clear the bit
 	virtualWriteRegister(AS7265X_LED_CONFIG, value, hi2c);
 }
@@ -423,12 +435,14 @@ void disableBulb(uint8_t device, I2C_HandleTypeDef *hi2c)
 //Current 3: 100mA
 void setBulbCurrent(uint8_t current, uint8_t device, I2C_HandleTypeDef *hi2c)
 {
+	uint8_t value;
+
 	selectDevice(device, hi2c);
 
 	// set the current
 	if (current > 0x03)
 		current = 0x03;                                        //Limit to two bits
-	uint8_t value = virtualReadRegister(AS7265X_LED_CONFIG, hi2c); //Read
+	value = virtualReadRegister(AS7265X_LED_CONFIG, hi2c); //Read
 	value &= 0xCF;                                     //Clear ICL_DRV bits
 	value |= (current << 4);                                 //Set ICL_DRV bits with user's choice
 	virtualWriteRegister(AS7265X_LED_CONFIG, value, hi2c);         //Write
@@ -450,10 +464,12 @@ void selectDevice(uint8_t device, I2C_HandleTypeDef *hi2c)
 //Enable the onboard indicator LED
 void enableIndicator(I2C_HandleTypeDef *hi2c)
 {
+	uint8_t value;
+
 	selectDevice(AS72651_NIR, hi2c);
 
 	//Read, mask/set, write
-	uint8_t value = virtualReadRegister(AS7265X_LED_CONFIG, hi2c);
+	value = virtualReadRegister(AS7265X_LED_CONFIG, hi2c);
 	value |= (1 << 0); //Set the bit
 
 	virtualWriteRegister(AS7265X_LED_CONFIG, value, hi2c);
@@ -462,10 +478,12 @@ void enableIndicator(I2C_HandleTypeDef *hi2c)
 //Disable the onboard indicator LED
 void disableIndicator(I2C_HandleTypeDef *hi2c)
 {
+	uint8_t value;
+
 	selectDevice(AS72651_NIR, hi2c);
 
 	//Read, mask/set, write
-	uint8_t value = virtualReadRegister(AS7265X_LED_CONFIG, hi2c);
+	value = virtualReadRegister(AS7265X_LED_CONFIG, hi2c);
 	value &= ~(1 << 0); //Clear the bit
 
 	virtualWriteRegister(AS7265X_LED_CONFIG, value, hi2c);
@@ -474,12 +492,14 @@ void disableIndicator(I2C_HandleTypeDef *hi2c)
 //Set the current limit of onboard LED. Default is max 8mA = 0x03.
 void setIndicatorCurrent(uint8_t current, I2C_HandleTypeDef *hi2c)
 {
+	uint8_t value;
+
 	selectDevice(AS72651_NIR, hi2c);
 
 	if (current > 0x03)
 		current = 0x03;
 	//Read, mask/set, write
-	uint8_t value = virtualReadRegister(AS7265X_LED_CONFIG, hi2c); //Read
+	value = virtualReadRegister(AS7265X_LED_CONFIG, hi2c); //Read
 	value &= 0xF9;                                     //Clear ICL_IND bits
 	value |= (current << 1);                                 //Set ICL_IND bits with user's choice
 
@@ -508,8 +528,10 @@ float getTemperatureAverage(I2C_HandleTypeDef *hi2c)
 //Give sensor at least 1000ms to reset
 void softReset(I2C_HandleTypeDef *hi2c)
 {
+	uint8_t value;
+
 	//Read, mask/set, write
-	uint8_t value = virtualReadRegister(AS7265X_CONFIG, hi2c); //Read
+	value = virtualReadRegister(AS7265X_CONFIG, hi2c); //Read
 	value |= (1 << 7);                                   //Set RST bit, automatically cleared after reset
 	virtualWriteRegister(AS7265X_CONFIG, value, hi2c);         //Write
 }
