@@ -26,7 +26,7 @@
  */
 
 #include <stdint.h>
-#include "main.h"
+#include "stm32f3xx_hal.h"
 
 #ifndef _SPARKFUN_AS7265X_H
 #define _SPARKFUN_AS7265X_H
@@ -196,6 +196,6 @@ uint8_t virtualReadRegister(uint8_t virtualAddr);
 void virtualWriteRegister(uint8_t virtualAddr, uint8_t dataToWrite);
 
 uint8_t readRegister(uint8_t addr, I2C_HandleTypeDef *hi2c);
-uint8_t writeRegister(uint8_t addr, uint8_t val);
+uint8_t writeRegister(uint8_t addr, uint8_t val, I2C_HandleTypeDef *hi2c);
 
 #endif

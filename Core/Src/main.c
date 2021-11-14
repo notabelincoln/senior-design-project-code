@@ -112,12 +112,15 @@ int main(void)
 		strcpy((char *)buffer, "Sensor array not found");
 	}  else { //Check for sensor presence
 		strcpy((char *)buffer, "Sensor found");
-		sprintf(buffer_uart, "0x%x - %s\r\n", ret, (char *)buffer);
+		sprintf((char *)buffer_uart, "0x%x - %s\r\n", ret, (char *)buffer);
 	}
 	HAL_UART_Transmit(&huart2, buffer_uart, strlen((char *)buffer_uart), HAL_MAX_DELAY);
 
 	value = readRegister(AS7265X_STATUS_REG, &hi2c1);
-	sprintf(buffer_uart, "0x%x - %s\r\n", value, (char *)buffer);
+	sprintf((char *)buffer_uart, "value: 0x%x\r\n", value);
+	HAL_UART_Transmit(&huart2, buffer_uart, strlen((char *)buffer_uart), HAL_MAX_DELAY);
+	value = writeRegister(AS7265X_WRITE_REG, AS7265X_DEV_SELECT_CONTROL, &hi2c1);
+	sprintf((char *)buffer_uart, "value: 0x%x\r\n", value);
 	HAL_UART_Transmit(&huart2, buffer_uart, strlen((char *)buffer_uart), HAL_MAX_DELAY);
 
 	/*
@@ -125,7 +128,6 @@ int main(void)
 		if ((value & 0x30) == 0)
 			return value; //Test if Slave1 and 2 are detected. If not, bail.
 	*/
-	HAL_Delay(1000);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */

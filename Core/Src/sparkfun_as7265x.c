@@ -26,7 +26,6 @@
 
 #include "sparkfun_as7265x.h"
 
-
 //Initializes the sensor with basic settings
 //Returns false if sensor is not detected
 /*
@@ -640,8 +639,6 @@ uint8_t readRegister(uint8_t addr, I2C_HandleTypeDef *hi2c)
 	uint8_t buffer;
 	HAL_StatusTypeDef ret;
 
-	buffer = 0;
-
 	ret = HAL_I2C_Master_Transmit(hi2c, AS7265X_ADDRS, &addr, sizeof(addr), HAL_MAX_DELAY);
 	if (ret != HAL_OK)
 		return ret; //Device failed to ack
@@ -654,19 +651,22 @@ uint8_t readRegister(uint8_t addr, I2C_HandleTypeDef *hi2c)
 }
 
 //Write a value to a spot in the AS726x
-/*
-uint8_t writeRegister(uint8_t addr, uint8_t val)
+uint8_t writeRegister(uint8_t addr, uint8_t val, I2C_HandleTypeDef *hi2c)
 {
-	_i2cPort->beginTransmission(AS7265X_ADDR);
-	_i2cPort->write(addr);
-	_i2cPort->write(val);
-	if (_i2cPort->endTransmission() != 0)
-	{
-		//Serial.println("No ack!");
-		return (false); //Device failed to ack
-	}
+	uint8_t buffer[2];
+	HAL_StatusTypeDef ret;
 
-	return (true);
+	buffer[0] = addr;
+	buffer[1] = val;
+
+	ret = HAL_I2C_Master_Transmit(hi2c, AS7265X_ADDRS, buffer, sizeof(buffer), HAL_MAX_DELAY);
+	if (ret != HAL_OK)
+		return ret; //Device failed to ack
+
+	ret = HAL_I2C_Master_Receive(hi2c, AS7265X_ADDRS, buffer, sizeof(buffer), HAL_MAX_DELAY);
+	if (ret != HAL_OK)
+		return ret; //Device failed to ack
+
+	return 0;
 }
-*/
 
