@@ -188,7 +188,7 @@ uint16_t getW(I2C_HandleTypeDef *hi2c);
 
 uint16_t getChannel(uint8_t channelRegister, uint8_t device, I2C_HandleTypeDef *hi2c);
 float getCalibratedValue(uint8_t calAddress, uint8_t devic, I2C_HandleTypeDef *hi2ce);
-float convertBytesToFloat(uint32_t myLong, I2C_HandleTypeDef *hi2c);
+float convertBytesToFloat(uint32_t myLong);
 
 void selectDevice(uint8_t device, I2C_HandleTypeDef *hi2c); //Change between the x51, x52, or x53 for data and settings
 
