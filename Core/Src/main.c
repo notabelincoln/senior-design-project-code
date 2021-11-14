@@ -77,9 +77,10 @@ int main(void)
 	uint8_t buffer_i2c[16];
 	uint8_t buffer_uart[128];
 
-	HAL_StatusTypeDef ret;
 	uint8_t value;
 	float final_val;
+
+	HAL_StatusTypeDef ret;
 	/* USER CODE END 1 */
 
 	/* MCU Configuration--------------------------------------------------------*/
@@ -105,25 +106,7 @@ int main(void)
 	MX_SPI1_Init();
 	MX_I2C1_Init();
 	/* USER CODE BEGIN 2 */
-	// Check if as7265x is connected
-	ret = HAL_I2C_IsDeviceReady(&hi2c1, AS7265X_ADDRS, 2, HAL_MAX_DELAY);
-	if (ret != HAL_OK) {
-		strcpy((char *)buffer, "Sensor array not found");
-	}  else { //Check for sensor presence
-		strcpy((char *)buffer, "Sensor found");
-		sprintf((char *)buffer_uart, "0x%x - %s\r\n", ret, (char *)buffer);
-	}
-	HAL_UART_Transmit(&huart2, buffer_uart, strlen((char *)buffer_uart), HAL_MAX_DELAY);
-
-	value = virtualReadRegister(AS7265X_DEV_SELECT_CONTROL, &hi2c1);
-	sprintf((char *)buffer_uart, "value: 0x%x\r\n", value);
-	HAL_UART_Transmit(&huart2, buffer_uart, strlen((char *)buffer_uart), HAL_MAX_DELAY);
-
-	/*
-	value = virtualReadRegister(AS7265X_DEV_SELECT_CONTROL);
-		if ((value & 0x30) == 0)
-			return value; //Test if Slave1 and 2 are detected. If not, bail.
-	*/
+	value = begin(hi2c1, huart2);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */

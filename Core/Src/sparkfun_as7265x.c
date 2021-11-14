@@ -36,7 +36,7 @@ uint8_t begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
 	uint8_t buffer[64];
 	HAL_StatusTypeDef ret;
 
-	ret = HAL_I2C_IsDeviceReady(&hi2c1, AS7265X_ADDRS, 2, HAL_MAX_DELAY);
+	ret = HAL_I2C_IsDeviceReady(hi2c, AS7265X_ADDRS, 2, HAL_MAX_DELAY);
 	if (ret != HAL_OK) {
 		strcpy((char *)buffer, "Sensor array not found");
 	}  else { //Check for sensor presence
