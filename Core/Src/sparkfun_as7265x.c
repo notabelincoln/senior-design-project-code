@@ -71,16 +71,22 @@ uint8_t begin(I2C_HandleTypeDef hi2c)
 
 	return (true); //We're all setup!
 }
+*/
+/*
 
 uint8_t getDeviceType()
 {
 	return (virtualReadRegister(AS7265X_HW_VERSION_HIGH));
 }
+*/
+/*
 uint8_t getHardwareVersion()
 {
 	return (virtualReadRegister(AS7265X_HW_VERSION_LOW));
 }
+*/
 
+/*
 uint8_t getMajorFirmwareVersion()
 {
 	virtualWriteRegister(AS7265X_FW_VERSION_HIGH, 0x01); //Set to 0x01 for Major
@@ -88,7 +94,9 @@ uint8_t getMajorFirmwareVersion()
 
 	return (virtualReadRegister(AS7265X_FW_VERSION_LOW));
 }
+*/
 
+/*
 uint8_t getPatchFirmwareVersion()
 {
 	virtualWriteRegister(AS7265X_FW_VERSION_HIGH, 0x02); //Set to 0x02 for Patch
@@ -96,7 +104,9 @@ uint8_t getPatchFirmwareVersion()
 
 	return (virtualReadRegister(AS7265X_FW_VERSION_LOW));
 }
+*/
 
+/*
 uint8_t getBuildFirmwareVersion()
 {
 	virtualWriteRegister(AS7265X_FW_VERSION_HIGH, 0x03); //Set to 0x03 for Build
@@ -104,8 +114,10 @@ uint8_t getBuildFirmwareVersion()
 
 	return (virtualReadRegister(AS7265X_FW_VERSION_LOW));
 }
+*/
 
 //Tells IC to take all channel measurements and polls for data ready flag
+/*
 void takeMeasurements()
 {
 	setMeasurementMode(AS7265X_MEASUREMENT_MODE_6CHAN_ONE_SHOT); //Set mode to all 6-channels, one-shot
@@ -116,8 +128,10 @@ void takeMeasurements()
 
 	//Readings can now be accessed via getCalibratedA(), getJ(), etc
 }
+*/
 
 //Turns on all bulbs, takes measurements of all channels, turns off all bulbs
+/*
 void takeMeasurementsWithBulb()
 {
 	enableBulb(AS7265x_LED_WHITE);
@@ -130,8 +144,10 @@ void takeMeasurementsWithBulb()
 	disableBulb(AS7265x_LED_IR);
 	disableBulb(AS7265x_LED_UV);
 }
+*/
 
 //Get the various color readings
+/*
 uint16_t getG()
 {
 	return (getChannel(AS7265X_R_G_A, AS72652_VISIBLE));
@@ -208,8 +224,10 @@ uint16_t getF()
 {
 	return (getChannel(AS7265X_W_L_F, AS72653_UV));
 }
+*/
 
 //A the 16-bit value stored in a given channel registerReturns
+/*
 uint16_t getChannel(uint8_t channelRegister, uint8_t device)
 {
 	selectDevice(device);
@@ -217,8 +235,10 @@ uint16_t getChannel(uint8_t channelRegister, uint8_t device)
 	colorData |= virtualReadRegister(channelRegister + 1);          //Low uint8_t
 	return (colorData);
 }
+*/
 
 //Returns the various calibration data
+/*
 float getCalibratedA()
 {
 	return (getCalibratedValue(AS7265X_R_G_A_CAL, AS72653_UV));
@@ -294,8 +314,10 @@ float getCalibratedW()
 {
 	return (getCalibratedValue(AS7265X_W_L_F_CAL, AS72651_NIR));
 }
+*/
 
 //Given an address, read four bytes and return the floating point calibrated value
+/*
 float getCalibratedValue(uint8_t calAddress, uint8_t device)
 {
 	selectDevice(device);
@@ -315,19 +337,23 @@ float getCalibratedValue(uint8_t calAddress, uint8_t device)
 
 	return (convertBytesToFloat(calBytes));
 }
+*/
 
 //Given 4 bytes returns the floating point value
+/*
 float convertBytesToFloat(uint32_t myLong)
 {
 	float myFloat;
 	memcpy(&myFloat, &myLong, 4); //Copy bytes into a float
 	return (myFloat);
 }
+*/
 
 //Mode 0: 4 channels out of 6 (see datasheet)
 //Mode 1: Different 4 channels out of 6 (see datasheet)
 //Mode 2: All 6 channels continuously
 //Mode 3: One-shot reading of all channels
+/*
 void setMeasurementMode(uint8_t mode)
 {
 	if (mode > 0b11)
@@ -339,12 +365,14 @@ void setMeasurementMode(uint8_t mode)
 	value |= (mode << 2);                                //Set BANK bits with user's choice
 	virtualWriteRegister(AS7265X_CONFIG, value);         //Write
 }
+*/
 
 //Sets the gain value
 //Gain 0: 1x (power-on default)
 //Gain 1: 3.7x
 //Gain 2: 16x
 //Gain 3: 64x
+/*
 void setGain(uint8_t gain)
 {
 	if (gain > 0b11)
@@ -356,15 +384,19 @@ void setGain(uint8_t gain)
 	value |= (gain << 4);                                //Set GAIN bits with user's choice
 	virtualWriteRegister(AS7265X_CONFIG, value);         //Write
 }
+*/
 
 //Sets the integration cycle amount
 //Give this function a byte from 0 to 255.
 //Time will be 2.8ms * [integration cycles + 1]
+/*
 void setIntegrationCycles(uint8_t cycleValue)
 {
 	virtualWriteRegister(AS7265X_INTERGRATION_TIME, cycleValue); //Write
 }
+*/
 
+/*
 void enableInterrupt()
 {
 	//Read, mask/set, write
@@ -372,8 +404,10 @@ void enableInterrupt()
 	value |= (1 << 6);                                   //Set INT bit
 	virtualWriteRegister(AS7265X_CONFIG, value);         //Write
 }
+*/
 
 //Disables the interrupt pin
+/*
 void disableInterrupt()
 {
 	//Read, mask/set, write
@@ -381,15 +415,19 @@ void disableInterrupt()
 	value &= ~(1 << 6);                                  //Clear INT bit
 	virtualWriteRegister(AS7265X_CONFIG, value);         //Write
 }
+*/
 
 //Checks to see if DRDY flag is set in the control setup register
-boolean dataAvailable()
+/*
+uint8_t dataAvailable()
 {
 	uint8_t value = virtualReadRegister(AS7265X_CONFIG);
 	return (value & (1 << 1)); //Bit 1 is DATA_RDY
 }
+*/
 
 //Enable the LED or bulb on a given device
+/*
 void enableBulb(uint8_t device)
 {
 	selectDevice(device);
@@ -399,8 +437,10 @@ void enableBulb(uint8_t device)
 	value |= (1 << 3); //Set the bit
 	virtualWriteRegister(AS7265X_LED_CONFIG, value);
 }
+*/
 
 //Disable the LED or bulb on a given device
+/*
 void disableBulb(uint8_t device)
 {
 	selectDevice(device);
@@ -410,12 +450,14 @@ void disableBulb(uint8_t device)
 	value &= ~(1 << 3); //Clear the bit
 	virtualWriteRegister(AS7265X_LED_CONFIG, value);
 }
+*/
 
 //Set the current limit of bulb/LED.
 //Current 0: 12.5mA
 //Current 1: 25mA
 //Current 2: 50mA
 //Current 3: 100mA
+/*
 void setBulbCurrent(uint8_t current, uint8_t device)
 {
 	selectDevice(device);
@@ -428,8 +470,10 @@ void setBulbCurrent(uint8_t current, uint8_t device)
 	value |= (current << 4);                                 //Set ICL_DRV bits with user's choice
 	virtualWriteRegister(AS7265X_LED_CONFIG, value);         //Write
 }
+*/
 
 //As we read various registers we have to point at the master or first/second slave
+/*
 void selectDevice(uint8_t device)
 {
 	//Set the bits 0:1. Just overwrite whatever is there because masking in the correct value doesn't work.
@@ -441,8 +485,10 @@ void selectDevice(uint8_t device)
 	//if(device < 3) value |= device; //Set the bits
 	//virtualWriteRegister(AS7265X_DEV_SELECT_CONTROL, value);
 }
+*/
 
 //Enable the onboard indicator LED
+/*
 void enableIndicator()
 {
 	selectDevice(AS72651_NIR);
@@ -453,8 +499,10 @@ void enableIndicator()
 
 	virtualWriteRegister(AS7265X_LED_CONFIG, value);
 }
+*/
 
 //Disable the onboard indicator LED
+/*
 void disableIndicator()
 {
 	selectDevice(AS72651_NIR);
@@ -465,8 +513,10 @@ void disableIndicator()
 
 	virtualWriteRegister(AS7265X_LED_CONFIG, value);
 }
+*/
 
 //Set the current limit of onboard LED. Default is max 8mA = 0b11.
+/*
 void setIndicatorCurrent(uint8_t current)
 {
 	selectDevice(AS72651_NIR);
@@ -480,15 +530,19 @@ void setIndicatorCurrent(uint8_t current)
 
 	virtualWriteRegister(AS7265X_LED_CONFIG, value); //Write
 }
+*/
 
 //Returns the temperature of a given device in C
+/*
 uint8_t getTemperature(uint8_t deviceNumber)
 {
 	selectDevice(deviceNumber);
 	return (virtualReadRegister(AS7265X_DEVICE_TEMP));
 }
+*/
 
 //Returns an average of all the sensor temps in C
+/*
 float getTemperatureAverage()
 {
 	float average = 0;
@@ -498,9 +552,11 @@ float getTemperatureAverage()
 
 	return (average / 3);
 }
+*/
 
 //Does a soft reset
 //Give sensor at least 1000ms to reset
+/*
 void softReset()
 {
 	//Read, mask/set, write
@@ -508,8 +564,10 @@ void softReset()
 	value |= (1 << 7);                                   //Set RST bit, automatically cleared after reset
 	virtualWriteRegister(AS7265X_CONFIG, value);         //Write
 }
+*/
 
 //Read a virtual register from the AS7265x
+/*
 uint8_t virtualReadRegister(uint8_t virtualAddr)
 {
 	uint8_t status;
@@ -542,8 +600,10 @@ uint8_t virtualReadRegister(uint8_t virtualAddr)
 	uint8_t incoming = readRegister(AS7265X_READ_REG);
 	return (incoming);
 }
+*/
 
 //Write to a virtual register in the AS726x
+/*
 void virtualWriteRegister(uint8_t virtualAddr, uint8_t dataToWrite)
 {
 	uint8_t status;
@@ -594,17 +654,19 @@ uint8_t readRegister(uint8_t addr, I2C_HandleTypeDef *hi2c)
 }
 
 //Write a value to a spot in the AS726x
-//boolean writeRegister(uint8_t addr, uint8_t val)
-//{
-//	_i2cPort->beginTransmission(AS7265X_ADDR);
-//	_i2cPort->write(addr);
-//	_i2cPort->write(val);
-//	if (_i2cPort->endTransmission() != 0)
-//	{
-//		//Serial.println("No ack!");
-//		return (false); //Device failed to ack
-//	}
-//
-//	return (true);
-//}
+/*
+uint8_t writeRegister(uint8_t addr, uint8_t val)
+{
+	_i2cPort->beginTransmission(AS7265X_ADDR);
+	_i2cPort->write(addr);
+	_i2cPort->write(val);
+	if (_i2cPort->endTransmission() != 0)
+	{
+		//Serial.println("No ack!");
+		return (false); //Device failed to ack
+	}
+
+	return (true);
+}
+*/
 
