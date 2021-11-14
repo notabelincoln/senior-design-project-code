@@ -75,6 +75,8 @@ int main(void)
 {
 	/* USER CODE BEGIN 1 */
 	uint8_t buffer[32];
+	uint8_t buffer_i2c[16];
+	uint8_t buffer_uart[128];
 
 	HAL_StatusTypeDef ret;
 	uint16_t val;
@@ -104,26 +106,22 @@ int main(void)
 	MX_SPI1_Init();
 	MX_I2C1_Init();
 	/* USER CODE BEGIN 2 */
-
+	// Check if as7265x is connected
+	ret = HAL_I2C_IsDeviceReady(&hi2c1, AS7265X_ADDR << 1, 2, HAL_MAX_DELAY);
+	if (ret != HAL_OK) {
+		strcpy((char *)buffer, "Sensor array not found");
+	}  else { //Check for sensor presence
+		strcpy((char *)buffer, "Sensor found");
+		sprintf(buffer_uart, "0x%x - %s\r\n", ret, (char *)buffer);
+	}
+	HAL_UART_Transmit(&huart2, buffer_uart, strlen((char *)buffer_uart), HAL_MAX_DELAY);
+	HAL_Delay(1000);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1)
 	{
-		strcpy((char *)buffer, "senior-design\r\n");
-		ret = HAL_I2C_Master_Transmit(&hi2c1, AS7265X_ADDR << 1, buffer, 1, HAL_MAX_DELAY);
-		if (ret != HAL_OK) {
-			strcpy((char *)buffer, "Error I2C Tx\r\n");
-		} else {
-			ret = HAL_I2C_Master_Receive(&hi2c1, AS7265X_ADDR << 1, buffer, 1, HAL_MAX_DELAY);
-			if (ret != HAL_OK)
-				strcpy((char *)buffer, "Error I2C Rx\r\n");
-			else
-				strcpy((char *)buffer, "Connected\r\n");
-		}
-		HAL_UART_Transmit(&huart2, buffer, strlen((char *)buffer), HAL_MAX_DELAY);
-		HAL_Delay(1000);
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
