@@ -36,12 +36,18 @@ uint8_t begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
 	uint8_t buffer[64];
 	HAL_StatusTypeDef ret;
 
-	ret = HAL_I2C_IsDeviceReady(hi2c, AS7265X_ADDR << 1, 2, HAL_MAX_DELAY);
+	ret = HAL_I2C_IsDeviceReady(&hi2c1, AS7265X_ADDRS, 2, HAL_MAX_DELAY);
 	if (ret != HAL_OK) {
-		strcpy((char *)buffer, "Sensor array not found\r\n");
-		HAL_UART_Transmit(huart, (char *)buffer, strlen((char *)buffer), HAL_MAX_DELAY);
-		return (uint8_t)ret;
+		strcpy((char *)buffer, "Sensor array not found");
+	}  else { //Check for sensor presence
+		strcpy((char *)buffer, "Sensor found");
+		sprintf((char *)buffer, "0x%x - %s\r\n", ret, (char *)buffer);
 	} //Check for sensor presence
+
+	HAL_UART_Transmit(huart, (char *)buffer, strlen((char *)buffer), HAL_MAX_DELAY);
+
+	if (ret != HAL_OK)
+		return (uint8_t)ret;
 
 	//Check to see if both slaves are detected
 	value = virtualReadRegister(AS7265X_DEV_SELECT_CONTROL, hi2c);
