@@ -28,6 +28,24 @@
 #include <stdio.h>
 #include <string.h>
 
+const uint8_t sensor_grid[6] = {
+		AS7265X_R_G_A_CAL,
+		AS7265X_S_H_B_CAL,
+		AS7265X_T_I_C_CAL,
+		AS7265X_U_J_D_CAL,
+		AS7265X_V_K_E_CAL,
+		AS7265X_W_L_F_CAL};
+
+const uint8_t spectra[3] = {
+		AS72653_UV,
+		AS72652_VISIBLE,
+		AS72651_NIR};
+
+const uint8_t bulb[3] = {
+		AS7265x_LED_UV,
+		AS7265x_LED_WHITE,
+		AS7265x_LED_IR};
+
 //Initializes the sensor with basic settings
 //Returns false if sensor is not detected
 uint8_t begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
@@ -46,7 +64,7 @@ uint8_t begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
 
 	sprintf(buffer, "0x%x - %s\r\n", (uint8_t)ret, sensor_status);
 
-	ret = HAL_UART_Transmit(huart, (char *)buffer, (size_t)strlen(buffer), HAL_MAX_DELAY);
+	ret = HAL_UART_Transmit(huart, (unsigned char *)buffer, (size_t)strlen(buffer), HAL_MAX_DELAY);
 	if (ret != HAL_OK)
 		return (uint8_t)ret;
 
@@ -221,7 +239,9 @@ uint16_t getChannel(uint8_t channelRegister, uint8_t device, I2C_HandleTypeDef *
 	uint16_t colorData;
 	selectDevice(device, hi2c);
 	colorData = virtualReadRegister(channelRegister, hi2c) << 8; //High uint8_t
+	HAL_Delay(10);
 	colorData |= virtualReadRegister(channelRegister + 1, hi2c);          //Low uint8_t
+	HAL_Delay(10);
 	return (colorData);
 }
 
@@ -339,27 +359,14 @@ void getDataBins(float *floatArray, I2C_HandleTypeDef *hi2c)
 	uint8_t i;
 	uint8_t j;
 
-	uint8_t spectrum[3] = {
-			AS72653_UV,
-			AS72652_VISIBLE,
-			AS72651_NIR
-	};
-
-	uint8_t sensor[6] = {
-			AS7265X_R_G_A_CAL,
-			AS7265X_S_H_B_CAL,
-			AS7265X_T_I_C_CAL,
-			AS7265X_U_J_D_CAL,
-			AS7265X_V_K_E_CAL,
-			AS7265X_W_L_F_CAL
-	};
-
 	takeMeasurements(hi2c); //This is a hard wait while all 18 channels are measured
 
 	for (i = 0; i < 3; i++) {
+		enableBulb(bulb[i], hi2c);
 		for (j = 0; j < 6; j++) {
-			floatArray[6 * i + j] = getCalibratedValue(sensor[j], spectrum[i], hi2c);
+			floatArray[6 * i + j] = getCalibratedValue(sensor_grid[j], spectra[i], hi2c);
 		}
+		disableBulb(bulb[i], hi2c);
 	}
 	/*
 	getCalibratedA()); //410nm
