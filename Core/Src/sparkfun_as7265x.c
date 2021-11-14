@@ -26,6 +26,7 @@
 
 #include "sparkfun_as7265x.h"
 
+#ifdef _SPARKFUN_AS7265X_H
 //Initializes the sensor with basic settings
 //Returns false if sensor is not detected
 /*
@@ -355,12 +356,12 @@ float convertBytesToFloat(uint32_t myLong)
 /*
 void setMeasurementMode(uint8_t mode)
 {
-	if (mode > 0b11)
-		mode = 0b11; //Error check
+	if (mode > 0x03)
+		mode = 0x03; //Error check
 
 	//Read, mask/set, write
 	uint8_t value = virtualReadRegister(AS7265X_CONFIG); //Read
-	value &= 0b11110011;                                 //Clear BANK bits
+	value &= 0xF3;                                 //Clear BANK bits
 	value |= (mode << 2);                                //Set BANK bits with user's choice
 	virtualWriteRegister(AS7265X_CONFIG, value);         //Write
 }
@@ -374,12 +375,12 @@ void setMeasurementMode(uint8_t mode)
 /*
 void setGain(uint8_t gain)
 {
-	if (gain > 0b11)
-		gain = 0b11;
+	if (gain > 0x3)
+		gain = 0x3;
 
 	//Read, mask/set, write
 	uint8_t value = virtualReadRegister(AS7265X_CONFIG); //Read
-	value &= 0b11001111;                                 //Clear GAIN bits
+	value &= 0xCF;                                 //Clear GAIN bits
 	value |= (gain << 4);                                //Set GAIN bits with user's choice
 	virtualWriteRegister(AS7265X_CONFIG, value);         //Write
 }
@@ -462,10 +463,10 @@ void setBulbCurrent(uint8_t current, uint8_t device)
 	selectDevice(device);
 
 	// set the current
-	if (current > 0b11)
-		current = 0b11;                                        //Limit to two bits
+	if (current > 0x03)
+		current = 0x03;                                        //Limit to two bits
 	uint8_t value = virtualReadRegister(AS7265X_LED_CONFIG); //Read
-	value &= 0b11001111;                                     //Clear ICL_DRV bits
+	value &= 0xCF;                                     //Clear ICL_DRV bits
 	value |= (current << 4);                                 //Set ICL_DRV bits with user's choice
 	virtualWriteRegister(AS7265X_LED_CONFIG, value);         //Write
 }
@@ -480,7 +481,7 @@ void selectDevice(uint8_t device)
 
 	//This fails
 	//uint8_t value = virtualReadRegister(AS7265X_DEV_SELECT_CONTROL);
-	//value &= 0b11111100; //Clear lower two bits
+	//value &= 0xFC; //Clear lower two bits
 	//if(device < 3) value |= device; //Set the bits
 	//virtualWriteRegister(AS7265X_DEV_SELECT_CONTROL, value);
 }
@@ -514,17 +515,17 @@ void disableIndicator()
 }
 */
 
-//Set the current limit of onboard LED. Default is max 8mA = 0b11.
+//Set the current limit of onboard LED. Default is max 8mA = 0x03.
 /*
 void setIndicatorCurrent(uint8_t current)
 {
 	selectDevice(AS72651_NIR);
 
-	if (current > 0b11)
-		current = 0b11;
+	if (current > 0x03)
+		current = 0x03;
 	//Read, mask/set, write
 	uint8_t value = virtualReadRegister(AS7265X_LED_CONFIG); //Read
-	value &= 0b11111001;                                     //Clear ICL_IND bits
+	value &= 0xF9;                                     //Clear ICL_IND bits
 	value |= (current << 1);                                 //Set ICL_IND bits with user's choice
 
 	virtualWriteRegister(AS7265X_LED_CONFIG, value); //Write
@@ -667,4 +668,4 @@ uint8_t writeRegister(uint8_t addr, uint8_t val, I2C_HandleTypeDef *hi2c)
 
 	return 0;
 }
-
+#endif
