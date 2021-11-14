@@ -112,7 +112,7 @@ uint8_t getMajorFirmwareVersion();
 uint8_t getPatchFirmwareVersion();
 uint8_t getBuildFirmwareVersion();
 
-uint8_t getTemperature(uint8_t deviceNumber = 0); //Get temp in C of the master IC
+// uint8_t getTemperature(uint8_t deviceNumber = 0); //Get temp in C of the master IC
 float getTemperatureAverage();                    //Get average of all three ICs
 
 void takeMeasurements();
