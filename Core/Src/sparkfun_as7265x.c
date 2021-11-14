@@ -566,40 +566,38 @@ void softReset()
 */
 
 //Read a virtual register from the AS7265x
-/*
-uint8_t virtualReadRegister(uint8_t virtualAddr)
+uint8_t virtualReadRegister(uint8_t virtualAddr, I2C_HandleTypeDef *hi2c)
 {
 	uint8_t status;
 
 	//Do a prelim check of the read register
-	status = readRegister(AS7265X_STATUS_REG);
+	status = readRegister(AS7265X_STATUS_REG, hi2c);
 	if (status & AS7265X_RX_VALID) //There is data to be read
 	{
-		readRegister(AS7265X_READ_REG); //Read the byte but do nothing with it
+		readRegister(AS7265X_READ_REG, hi2c); //Read the byte but do nothing with it
 	}
 
 	//Wait for WRITE flag to clear
 	while (1)
 	{
-		status = readRegister(AS7265X_STATUS_REG);
+		status = readRegister(AS7265X_STATUS_REG, hi2c);
 		if (!(status & AS7265X_TX_VALID))
 			break; // If TX bit is clear, it is ok to write
 		HAL_Delay(AS7265X_POLLING_DELAY);
 	}
 
 	// Send the virtual register address (bit 0 should be 0 to indicate we are reading a register).
-	writeRegister(AS7265X_WRITE_REG, virtualAddr);
+	writeRegister(AS7265X_WRITE_REG, virtualAddr, hi2c);
 
 	//Wait for READ flag to be set
-	while (!(readRegister(AS7265X_STATUS_REG) & AS7265X_RX_VALID))
+	while (!(readRegister(AS7265X_STATUS_REG, hi2c) & AS7265X_RX_VALID))
 	{
 		HAL_Delay(AS7265X_POLLING_DELAY);
 	}
 
-	uint8_t incoming = readRegister(AS7265X_READ_REG);
+	uint8_t incoming = readRegister(AS7265X_READ_REG, hi2c);
 	return (incoming);
 }
-*/
 
 //Write to a virtual register in the AS726x
 /*

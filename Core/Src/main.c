@@ -116,10 +116,7 @@ int main(void)
 	}
 	HAL_UART_Transmit(&huart2, buffer_uart, strlen((char *)buffer_uart), HAL_MAX_DELAY);
 
-	value = readRegister(AS7265X_STATUS_REG, &hi2c1);
-	sprintf((char *)buffer_uart, "value: 0x%x\r\n", value);
-	HAL_UART_Transmit(&huart2, buffer_uart, strlen((char *)buffer_uart), HAL_MAX_DELAY);
-	value = writeRegister(AS7265X_WRITE_REG, AS7265X_DEV_SELECT_CONTROL, &hi2c1);
+	value = virtualReadRegister(AS7265X_DEV_SELECT_CONTROL, &hi2c1);
 	sprintf((char *)buffer_uart, "value: 0x%x\r\n", value);
 	HAL_UART_Transmit(&huart2, buffer_uart, strlen((char *)buffer_uart), HAL_MAX_DELAY);
 

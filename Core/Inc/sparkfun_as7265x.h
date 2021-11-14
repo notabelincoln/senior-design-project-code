@@ -192,7 +192,7 @@ float convertBytesToFloat(uint32_t myLong);
 
 void selectDevice(uint8_t device); //Change between the x51, x52, or x53 for data and settings
 
-uint8_t virtualReadRegister(uint8_t virtualAddr);
+uint8_t virtualReadRegister(uint8_t virtualAddr, I2C_HandleTypeDef *hi2c);
 void virtualWriteRegister(uint8_t virtualAddr, uint8_t dataToWrite);
 
 uint8_t readRegister(uint8_t addr, I2C_HandleTypeDef *hi2c);
