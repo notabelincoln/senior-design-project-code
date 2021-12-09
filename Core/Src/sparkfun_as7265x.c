@@ -368,28 +368,6 @@ void getDataBins(float *floatArray, I2C_HandleTypeDef *hi2c)
 		}
 		disableBulb(bulb[i], hi2c);
 	}
-	/*
-	getCalibratedA()); //410nm
-
-	getCalibratedB()); //435nm
-
-	getCalibratedC()); //460nm
-	getCalibratedD()); //485nm
-	getCalibratedE()); //510nm
-	getCalibratedF()); //535nm
-	getCalibratedG()); //560nm
-	getCalibratedH()); //585nm
-	getCalibratedR()); //610nm
-	getCalibratedI()); //645nm
-	getCalibratedS()); //680nm
-	getCalibratedJ()); //705nm
-
-	getCalibratedT()); //730nm
-	getCalibratedU()); //760nm
-	getCalibratedV()); //810nm
-	getCalibratedW()); //860nm
-	getCalibratedK()); //900nm
-	getCalibratedL()); //940nm*/
 }
 
 //Mode 0: 4 channels out of 6 (see datasheet)
