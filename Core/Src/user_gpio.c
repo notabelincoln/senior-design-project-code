@@ -14,12 +14,19 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	HAL_Delay(200);
 	switch (GPIO_Pin) {
 	case GPIO_PIN_4: {
+		// counter and UART string variables
 		uint8_t i;
 		uint8_t buffer[32];
+
+		// get sample data and store it into the sample array
 		getDataBins(sensor_sample_data, &hi2c1);
+
+		// display the sample over the uart connection
 		ret = HAL_UART_Transmit(&huart2, "Sample Data:\r\n",
 				strlen("Sample Data:\r\n"), HAL_MAX_DELAY);
 		HAL_Delay(30);
+
+		// print out each calibrated sample value
 		for (i = 0; i < 18; i++) {
 			sprintf((char *)buffer,	"%d nm: %0.3f\r\n", 410 + 25 * i,
 					sensor_calibration_data[i] - sensor_sample_data[i]);
@@ -27,18 +34,26 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 					strlen((char *)buffer), HAL_MAX_DELAY);
 			HAL_Delay(30);
 		}
+
 		ret = HAL_UART_Transmit(&huart2, "------------------------\r\n",
 				strlen("------------------------\r\n"), HAL_MAX_DELAY);
 		HAL_Delay(30);
 	}
 	break;
 	case GPIO_PIN_5: {
+		// counter and UART string variables
 		uint8_t i;
 		uint8_t buffer[32];
+
+		// get calibration data and store it into the calibration array
 		getDataBins(sensor_calibration_data, &hi2c1);
+
+		// display the calibration data over the uart connection
 		ret = HAL_UART_Transmit(&huart2, "Calibration Data:\r\n",
 				strlen("Calibration Data:\r\n"), HAL_MAX_DELAY);
 		HAL_Delay(30);
+
+		// print out each calibrated bin value
 		for (i = 0; i < 18; i++) {
 			sprintf((char *)buffer,	"%d nm: %0.3f\r\n",
 					410 + 25 * i, sensor_calibration_data[i]);
