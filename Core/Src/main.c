@@ -23,12 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
-#include <string.h>
-#include "sd_spi.h"
-#include "sparkfun_as7265x.h"
-#include "user_buttons.h"
-#include "user_lcd.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -84,7 +79,6 @@ int main(void)
 	uint8_t value;
 
 	float sensor_data[18];
-	float sensor_calibration_data[18];
 
 	HAL_StatusTypeDef ret;
 	/* USER CODE END 1 */

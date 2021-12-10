@@ -32,7 +32,13 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
+#include <string.h>
+#include "sd_spi.h"
+#include "sparkfun_as7265x.h"
+#include "user_buttons.h"
+#include "user_gpio.h"
+#include "user_lcd.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
