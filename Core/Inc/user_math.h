@@ -4,7 +4,7 @@
 #include "user_global.h"
 
 // normalize sample data
-inline float *normalize_sample_array(float *sample, float *calibrate);
+inline float *normalize_sample_array(float *sample, float *calibrate, float *normal_array);
 
 // return the greater between two floats
 inline float float_max(float x1, float x2);
