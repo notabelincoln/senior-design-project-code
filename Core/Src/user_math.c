@@ -1,6 +1,7 @@
 // user_math.c
 // Abraham Jordan
 // C file for basic data processing
+#include "user_math.h"
 
 // normalize sample data
 inline float *normalize_sample_array(float *sample, float *calibrate)
