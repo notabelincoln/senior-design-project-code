@@ -1,0 +1,3 @@
+#ifndef SENSOR_DATA_LENGTH
+#define SENSOR_DATA_LENGTH 18
+#endif
