@@ -17,6 +17,10 @@
   */
 /* USER CODE END Header */
 
+// for some reason the define doesn't work when placed further down
+#define _VOLUMES    1
+/* Number of volumes (logical drives) to be used. */
+
 #ifndef _FFCONF
 #define _FFCONF 32020	/* Revision ID */
 
@@ -157,7 +161,6 @@
 / Drive/Volume Configurations
 /----------------------------------------------------------------------------*/
 
-#define _VOLUMES    1
 /* Number of volumes (logical drives) to be used. */
 
 /* USER CODE BEGIN Volumes */
@@ -206,7 +209,7 @@
 / System Configurations
 /----------------------------------------------------------------------------*/
 
-#define _FS_NORTC	1
+#define _FS_NORTC	0
 #define _NORTC_MON	6
 #define _NORTC_MDAY	4
 #define _NORTC_YEAR	2015

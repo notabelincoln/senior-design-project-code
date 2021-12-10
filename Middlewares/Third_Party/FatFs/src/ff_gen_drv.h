@@ -58,7 +58,7 @@ typedef struct
 
 /** 
   * @brief  Global Disk IO Drivers structure definition  
-  */ 
+  */
 typedef struct
 { 
   uint8_t                 is_initialized[_VOLUMES];
