@@ -9,6 +9,7 @@ HAL_StatusTypeDef ret;
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+	HAL_Delay(1000);
 	uint8_t i;
 	uint8_t buffer[32];
 	getDataBins(sensor_data, &hi2c1);
