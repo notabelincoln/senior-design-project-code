@@ -48,8 +48,10 @@ SPI_HandleTypeDef hspi1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-extern float sensor_data[18];
-extern HAL_StatusTypeDef ret;
+float sensor_sample_data[SENSOR_DATA_LENGTH] = {0};
+float sensor_calibration_data[SENSOR_DATA_LENGTH] = {0};
+float sensor_sample_normal[SENSOR_DATA_LENGTH] = {0};
+HAL_StatusTypeDef ret;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -105,7 +107,6 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	HAL_Delay(1000);
 	while (1)
 	{
 
