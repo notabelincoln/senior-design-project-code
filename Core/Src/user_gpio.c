@@ -1,11 +1,13 @@
 #include "user_gpio.h"
+#include "user_math.h"
+#include <string.h>
 
 I2C_HandleTypeDef hi2c1;
 SPI_HandleTypeDef hspi1;
 UART_HandleTypeDef huart2;
 
-float sensor_sample_data[18] = {0};
-float sensor_calibration_data[18] = {0};
+float sensor_sample_data[SENSOR_DATA_LENGTH] = {0};
+float sensor_calibration_data[SENSOR_DATA_LENGTH] = {0};
 
 HAL_StatusTypeDef ret;
 
@@ -17,6 +19,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		// counter and UART string variables
 		uint8_t i;
 		uint8_t buffer[32];
+		float sensor_sample_normal[SENSOR_DATA_LENGTH];
 
 		// get sample data and store it into the sample array
 		getDataBins(sensor_sample_data, &hi2c1);
@@ -30,6 +33,26 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		for (i = 0; i < 18; i++) {
 			sprintf((char *)buffer,	"%d nm: %0.3f\r\n", 410 + 25 * i,
 					sensor_calibration_data[i] - sensor_sample_data[i]);
+			ret = HAL_UART_Transmit(&huart2, (char *)buffer,
+					strlen((char *)buffer), HAL_MAX_DELAY);
+			HAL_Delay(30);
+		}
+
+		normalize_sample(sensor_sample_data, sensor_calibration_data, sensor_sample_normal);
+
+		ret = HAL_UART_Transmit(&huart2, "------------------------\r\n",
+				strlen("------------------------\r\n"), HAL_MAX_DELAY);
+		HAL_Delay(30);
+
+		// display the sample over the uart connection
+		ret = HAL_UART_Transmit(&huart2, "Normalized Sample Data:\r\n",
+				strlen("Normalized Sample Data:\r\n"), HAL_MAX_DELAY);
+		HAL_Delay(30);
+
+		// print out each calibrated sample value
+		for (i = 0; i < 18; i++) {
+			sprintf((char *)buffer,	"%d nm: %0.3f\r\n", 410 + 25 * i,
+					sensor_sample_normal[i]);
 			ret = HAL_UART_Transmit(&huart2, (char *)buffer,
 					strlen((char *)buffer), HAL_MAX_DELAY);
 			HAL_Delay(30);

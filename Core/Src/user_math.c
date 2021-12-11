@@ -2,39 +2,35 @@
 // Abraham Jordan
 // C file for basic data processing
 #include "user_math.h"
-#include <stdint.h>
 
+#ifdef USER_MATH_H
+#define USER_MATH_C
 // normalize sample data
-inline float *normalize_sample_array(float *sample, float *calibrate, float *normal_array)
+int normalize_sample(float *sample, float *calibrate, float *normal)
 {
 	// counter, min value, max value
-	uint32_t i;
+	unsigned int i;
 	float min;
 	float max;
 
+	// first assign the deltas into normal
+	for (i = 0; i < SENSOR_DATA_LENGTH; i++)
+		normal[i] = calibrate[i] - sample[i];
+
+	// set min and max value to first element of normalized array
+	min = max = normal[0];
+
 	// gather the minimum and maximum values, store the value delta into ret_array
 	for (i = 0; i < SENSOR_DATA_LENGTH - 1; i++) {
-		min = float_min(calibrate[i] - sample[i], calibrate[i+1] - sample[i+1]);
-		max = float_max(calibrate[i] - sample[i], calibrate[i+1] - sample[i+1]);
-
+		max = (max >= normal[i+1]) ? max : normal[i+1];
+		min = (min < normal[i+1]) ? min : normal[i+1];
 	}
 
 	// normalize the values in delta_array
 	for (i = 0; i < SENSOR_DATA_LENGTH; i++) {
-		normal_array[i] = (calibrate[i] - sample[i]) / (max - min);
+		normal[i] = (normal[i] - min) / (max - min);
 	}
 
-	return *normal_array;
+	return 0;
 }
-
-// return the greater between two floats
-inline float float_max(float x1, float x2)
-{
-	return (x1 >= x2) ? x1 : x2;
-}
-
-// compute the lesser of two floats
-inline float float_min(float x1, float x2)
-{
-	return (x1 < x2) ? x1 : x2;
-}
+#endif

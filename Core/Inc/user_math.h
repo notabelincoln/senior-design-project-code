@@ -1,13 +1,12 @@
 // user_math.h
 // Abraham Jordan
 // Header file for basic data processing
+
+#ifndef USER_MATH_H
+#define USER_MATH_H
 #include "user_global.h"
 
 // normalize sample data
-inline float *normalize_sample_array(float *sample, float *calibrate, float *normal_array);
+int normalize_sample(float *sample, float *calibrate, float *normal);
 
-// return the greater between two floats
-inline float float_max(float x1, float x2);
-
-// compute the lesser of two floats
-inline float float_min(float x1, float x2);
+#endif
