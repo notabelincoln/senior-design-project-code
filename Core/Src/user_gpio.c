@@ -16,11 +16,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 		// display the sample over the uart connection
 		ret = uart_printf("Sample Data:\r\n");
-
+		HAL_Delay(10);
 		// print out each calibrated sample value
 		for (i = 0; i < 18; i++) {
 			ret = uart_printf("%d nm: %7.3f\r\n", 410 + 25 * i,
 					sensor_calibration_data[i] - sensor_sample_data[i]);
+			HAL_Delay(10);
 		}
 
 		normalize_sample(sensor_sample_data, sensor_calibration_data, sensor_sample_normal);
@@ -29,11 +30,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 		// display the sample over the uart connection
 		ret = uart_printf("Normalized Sample Data:\r\n");
-
+		HAL_Delay(10);
 		// print out each calibrated sample value
 		for (i = 0; i < 18; i++) {
 			ret = uart_printf("%d nm: %7.3f\r\n", 410 + 25 * i,
 					sensor_sample_normal[i]);
+			HAL_Delay(10);
 		}
 
 		ret = uart_printf("------------------------\r\n");
@@ -48,11 +50,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 		// display the calibration data over the uart connection
 		ret = uart_printf("Calibration Data:\r\n");
-
+		HAL_Delay(10);
 		// print out each calibrated bin value
 		for (i = 0; i < 18; i++) {
 			ret = uart_printf("%d nm: %0.3f\r\n",
 					410 + 25 * i, sensor_calibration_data[i]);
+			HAL_Delay(10);
 		}
 		ret = uart_printf("------------------------\r\n");
 	}
