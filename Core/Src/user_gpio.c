@@ -70,11 +70,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 		UINT bytesWrote;
 
+		//Read 30 bytes from "test.txt" on the SD card
+		BYTE readBuf[30];
+
 		uart_printf("\r\n~ SD card demo by kiwih ~\r\n\r\n");
 
 		HAL_Delay(1000); //a short delay is important to let the SD card settle
-
-
 
 		//Open the file system
 		fres = f_mount(&FatFs, "", 1); //1=mount now
@@ -104,9 +105,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			return;
 		}
 		uart_printf("I was able to open 'test.txt' for reading!\r\n");
-
-		//Read 30 bytes from "test.txt" on the SD card
-		BYTE readBuf[30];
 
 		//We can either use f_read OR f_gets to get data out of files
 		//f_gets is a wrapper on f_read that does some string formatting for us
