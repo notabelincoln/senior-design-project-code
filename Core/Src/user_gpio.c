@@ -58,14 +58,23 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 	break;
 	case GPIO_PIN_11: {
-		uart_printf("\r\n~ SD card demo by kiwih ~\r\n\r\n");
-
-		HAL_Delay(1000); //a short delay is important to let the SD card settle
-
 		//some variables for FatFs
 		FATFS FatFs; 	//Fatfs handle
 		FIL fil; 		//File handle
 		FRESULT fres; //Result after operations
+
+		//Let's get some statistics from the SD card
+		DWORD free_clusters, free_sectors, total_sectors;
+
+		FATFS* getFreeFs;
+
+		UINT bytesWrote;
+
+		uart_printf("\r\n~ SD card demo by kiwih ~\r\n\r\n");
+
+		HAL_Delay(1000); //a short delay is important to let the SD card settle
+
+
 
 		//Open the file system
 		fres = f_mount(&FatFs, "", 1); //1=mount now
@@ -74,10 +83,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			return;
 		}
 
-		//Let's get some statistics from the SD card
-		DWORD free_clusters, free_sectors, total_sectors;
 
-		FATFS* getFreeFs;
 
 		fres = f_getfree("", &free_clusters, &getFreeFs);
 		if (fres != FR_OK) {
@@ -124,7 +130,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 		//Copy in a string
 		strncpy((char*)readBuf, "a new file is made!", 19);
-		UINT bytesWrote;
+
 		fres = f_write(&fil, readBuf, 19, &bytesWrote);
 		if(fres == FR_OK) {
 			uart_printf("Wrote %i bytes to 'write.txt'!\r\n", bytesWrote);
