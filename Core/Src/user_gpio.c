@@ -10,7 +10,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	case GPIO_PIN_4: {
 		// counter and UART string variables
 		uint8_t i;
-		uint8_t buffer[32];
 
 		// get sample data and store it into the sample array
 		getDataBins(sensor_sample_data, &hi2c1);
@@ -43,7 +42,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	case GPIO_PIN_5: {
 		// counter and UART string variables
 		uint8_t i;
-		uint8_t buffer[32];
 
 		// get calibration data and store it into the calibration array
 		getDataBins(sensor_calibration_data, &hi2c1);
@@ -73,7 +71,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		fres = f_mount(&FatFs, "", 1); //1=mount now
 		if (fres != FR_OK) {
 			uart_printf("f_mount error (%i)\r\n", fres);
-			while(1);
+			return;
 		}
 
 		//Let's get some statistics from the SD card
@@ -84,7 +82,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		fres = f_getfree("", &free_clusters, &getFreeFs);
 		if (fres != FR_OK) {
 			uart_printf("f_getfree error (%i)\r\n", fres);
-			while(1);
+			return;
 		}
 
 		//Formula comes from ChaN's documentation
@@ -97,7 +95,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		fres = f_open(&fil, "test.txt", FA_READ);
 		if (fres != FR_OK) {
 			uart_printf("f_open error (%i)\r\n");
-			while(1);
+			return;
 		}
 		uart_printf("I was able to open 'test.txt' for reading!\r\n");
 
@@ -117,7 +115,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		f_close(&fil);
 
 		//Now let's try and write a file "write.txt"
-		fres = f_open(&fil, "write.txt", FA_WRITE | FA_OPEN_ALWAYS | FA_CREATE_ALWAYS);
+		fres = f_open(&fil, "write.txt", FA_WRITE | FA_OPEN_ALWAYS);
 		if(fres == FR_OK) {
 			uart_printf("I was able to open 'write.txt' for writing\r\n");
 		} else {
@@ -127,6 +125,28 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		//Copy in a string
 		strncpy((char*)readBuf, "a new file is made!", 19);
 		UINT bytesWrote;
+		fres = f_write(&fil, readBuf, 19, &bytesWrote);
+		if(fres == FR_OK) {
+			uart_printf("Wrote %i bytes to 'write.txt'!\r\n", bytesWrote);
+		} else {
+			uart_printf("f_write error (%i)\r\n");
+		}
+
+		//Be a tidy kiwi - don't forget to close your file!
+		f_close(&fil);
+
+		HAL_Delay(100);
+
+		//Now let's try and write a file "write.txt"
+		fres = f_open(&fil, "write.txt", FA_WRITE | FA_OPEN_ALWAYS);
+		if(fres == FR_OK) {
+			uart_printf("I was able to open 'write.txt' for writing\r\n");
+		} else {
+			uart_printf("f_open error (%i)\r\n", fres);
+		}
+
+		f_lseek(&fil, f_size(&fil));
+		strncpy((char*)readBuf, "a new line is made!", 19);
 		fres = f_write(&fil, readBuf, 19, &bytesWrote);
 		if(fres == FR_OK) {
 			uart_printf("Wrote %i bytes to 'write.txt'!\r\n", bytesWrote);
