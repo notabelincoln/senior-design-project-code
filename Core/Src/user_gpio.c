@@ -129,10 +129,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 				uart_printf("f_write error (%i)\r\n");
 				return;
 			}
+			HAL_Delay(10);
 		}
 
-		sprintf((char *)readBuf, "\n");
-		fres = f_write(&fil, readBuf, 1, &bytesWrote);
+		fres = f_write(&fil, "\n", 1, &bytesWrote);
 		if(fres == FR_OK) {
 			uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, sample_file_name);
 		} else {
@@ -140,8 +140,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			return;
 		}
 
-
-		//Be a tidy kiwi - don't forget to close your file!
 		f_close(&fil);
 
 		HAL_Delay(100);
@@ -166,10 +164,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 				uart_printf("f_write error (%i)\r\n");
 				return;
 			}
+			HAL_Delay(10);
 		}
 
-		sprintf((char *)readBuf, "\n");
-		fres = f_write(&fil, readBuf, 1, &bytesWrote);
+		fres = f_write(&fil, "\n", 1, &bytesWrote);
 		if(fres == FR_OK) {
 			uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, calibration_file_name);
 		} else {
@@ -198,13 +196,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			fres = f_write(&fil, readBuf, 10, &bytesWrote);
 			if(fres == FR_OK) {
 				uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, normal_file_name);
+				HAL_Delay(10);
 			} else {
 				uart_printf("f_write error (%i)\r\n");
 				return;
 			}
+			HAL_Delay(10);
 		}
-		sprintf((char *)readBuf, "\n");
-		fres = f_write(&fil, readBuf, 1, &bytesWrote);
+		fres = f_write(&fil, "\n", 1, &bytesWrote);
 		if(fres == FR_OK) {
 			uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, normal_file_name);
 		} else {
@@ -212,7 +211,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			return;
 		}
 
-		//Be a tidy kiwi - don't forget to close your file!
 		f_close(&fil);
 
 		HAL_Delay(100);
