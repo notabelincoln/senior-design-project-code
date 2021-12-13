@@ -3,8 +3,6 @@
 // C file for basic data processing
 #include "user_math.h"
 
-#ifdef USER_MATH_H
-#define USER_MATH_C
 // normalize sample data
 int normalize_sample(float *sample, float *calibrate, float *normal)
 {
@@ -33,4 +31,3 @@ int normalize_sample(float *sample, float *calibrate, float *normal)
 
 	return 0;
 }
-#endif
