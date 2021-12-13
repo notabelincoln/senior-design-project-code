@@ -19,7 +19,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		HAL_Delay(10);
 		// print out each calibrated sample value
 		for (i = 0; i < 18; i++) {
-			ret = uart_printf("%d nm: %7.3f\r\n", 410 + 25 * i,
+			ret = uart_printf("%d nm: %09.3f\r\n", 410 + 25 * i,
 					sensor_calibration_data[i] - sensor_sample_data[i]);
 			HAL_Delay(10);
 		}
@@ -33,7 +33,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		HAL_Delay(10);
 		// print out each calibrated sample value
 		for (i = 0; i < 18; i++) {
-			ret = uart_printf("%d nm: %7.3f\r\n", 410 + 25 * i,
+			ret = uart_printf("%d nm: %09.3f\r\n", 410 + 25 * i,
 					sensor_sample_normal[i]);
 			HAL_Delay(10);
 		}
@@ -53,7 +53,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		HAL_Delay(10);
 		// print out each calibrated bin value
 		for (i = 0; i < 18; i++) {
-			ret = uart_printf("%d nm: %0.3f\r\n",
+			ret = uart_printf("%d nm: %09.3f\r\n",
 					410 + 25 * i, sensor_calibration_data[i]);
 			HAL_Delay(10);
 		}
@@ -67,7 +67,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		// file names for the sample data, calibration data, and normalized data
 		char *sample_file_name = "samples.csv";
 		char *calibration_file_name = "calibration.csv";
-		char *normal_file_name = "normal.txt";
+		char *normal_file_name = "normal.csv";
 
 		//some variables for FatFs
 		FATFS FatFs; 	//Fatfs handle
@@ -109,7 +109,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 		uart_printf("uSD card stats:\r\n%10lu KiB total drive space.\r\n%10lu KiB available.\r\n", total_sectors / 2, free_sectors / 2);
 
-		// Attempt to append data to "sample.txt"
+		// Attempt to append sample data to "sample.txt"
 		fres = f_open(&fil, sample_file_name, FA_WRITE | FA_OPEN_ALWAYS);
 		if(fres == FR_OK) {
 			uart_printf("I was able to open '%s' for writing\r\n", sample_file_name);
@@ -121,7 +121,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		f_lseek(&fil, f_size(&fil));
 
 		for (i = 0; i < SENSOR_DATA_LENGTH; i++) {
-			sprintf((char *)readBuf, "%.3f,", sensor_sample_data[i]);
+			sprintf((char *)readBuf, "%09.3f,", sensor_sample_data[i]);
 			fres = f_write(&fil, readBuf, 10, &bytesWrote);
 			if(fres == FR_OK) {
 				uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, sample_file_name);
@@ -134,18 +134,19 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		sprintf((char *)readBuf, "\n");
 		fres = f_write(&fil, readBuf, 1, &bytesWrote);
 		if(fres == FR_OK) {
-			uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, normal_file_name);
+			uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, sample_file_name);
 		} else {
 			uart_printf("f_write error (%i)\r\n");
 			return;
 		}
+
 
 		//Be a tidy kiwi - don't forget to close your file!
 		f_close(&fil);
 
 		HAL_Delay(100);
 
-		// Attempt to append data to "sample.txt"
+		// Attempt to append sample data to "calibration.txt"
 		fres = f_open(&fil, calibration_file_name, FA_WRITE | FA_OPEN_ALWAYS);
 		if(fres == FR_OK) {
 			uart_printf("I was able to open '%s' for writing\r\n", calibration_file_name);
@@ -157,7 +158,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		f_lseek(&fil, f_size(&fil));
 
 		for (i = 0; i < SENSOR_DATA_LENGTH; i++) {
-			sprintf((char *)readBuf, "%.3f,", sensor_calibration_data[i]);
+			sprintf((char *)readBuf, "%09.3f,", sensor_calibration_data[i]);
 			fres = f_write(&fil, readBuf, 10, &bytesWrote);
 			if(fres == FR_OK) {
 				uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, calibration_file_name);
@@ -170,7 +171,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		sprintf((char *)readBuf, "\n");
 		fres = f_write(&fil, readBuf, 1, &bytesWrote);
 		if(fres == FR_OK) {
-			uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, normal_file_name);
+			uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, calibration_file_name);
 		} else {
 			uart_printf("f_write error (%i)\r\n");
 			return;
@@ -181,7 +182,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 		HAL_Delay(100);
 
-		// Attempt to append data to "sample.txt"
+		// Attempt to append sample data to "normal.txt"
 		fres = f_open(&fil, normal_file_name, FA_WRITE | FA_OPEN_ALWAYS);
 		if(fres == FR_OK) {
 			uart_printf("I was able to open '%s' for writing\r\n", normal_file_name);
@@ -193,7 +194,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		f_lseek(&fil, f_size(&fil));
 
 		for (i = 0; i < SENSOR_DATA_LENGTH; i++) {
-			sprintf((char *)readBuf, "%.3f,", sensor_sample_normal[i]);
+			sprintf((char *)readBuf, "%09.3f,", sensor_sample_normal[i]);
 			fres = f_write(&fil, readBuf, 10, &bytesWrote);
 			if(fres == FR_OK) {
 				uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, normal_file_name);
