@@ -15,6 +15,4 @@ extern float sensor_sample_data[SENSOR_DATA_LENGTH];
 extern float sensor_calibration_data[SENSOR_DATA_LENGTH];
 extern float sensor_sample_normal[SENSOR_DATA_LENGTH];
 
-extern HAL_StatusTypeDef ret;
-
 #endif
