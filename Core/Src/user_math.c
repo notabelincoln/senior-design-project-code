@@ -35,7 +35,7 @@ int normalize_sample(float *sample, float *calibrate, float *normal)
 int decToBin_oneDigit(int dec, int binary[8]){
 	int i=0;
 	while (dec){
-		//printf("dec\%2: %d   dec/2: %d \r\n", dec%2, dec/2);
+
 		binary[i]= dec & 0x01;
 		dec >>= 1;
 		i+=1;
