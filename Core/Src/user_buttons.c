@@ -10,20 +10,31 @@ HAL_StatusTypeDef get_sample_data()
 
 	// display the sample over the uart connection
 	ret = uart_printf("Sample Data:\r\n");
+	if (ret != HAL_OK)
+		return ret;
+
 	HAL_Delay(10);
 	// print out each calibrated sample value
 	for (i = 0; i < 18; i++) {
 		ret = uart_printf("%d nm: %09.3f\r\n", 410 + 25 * i,
 				sensor_calibration_data[i] - sensor_sample_data[i]);
 		HAL_Delay(10);
+		if (ret != HAL_OK)
+			return ret;
 	}
 
 	normalize_sample(sensor_sample_data, sensor_calibration_data, sensor_sample_normal);
 
 	ret = uart_printf("------------------------\r\n");
+	if (ret != HAL_OK)
+		return ret;
 
 	// display the sample over the uart connection
 	ret = uart_printf("Normalized Sample Data:\r\n");
+
+	if (ret != HAL_OK)
+		return ret;
+
 	HAL_Delay(10);
 	// print out each calibrated sample value
 	for (i = 0; i < 18; i++) {
@@ -32,7 +43,7 @@ HAL_StatusTypeDef get_sample_data()
 		HAL_Delay(10);
 	}
 
-	ret = uart_printf("------------------------\r\n");
+	return uart_printf("------------------------\r\n");
 }
 
 HAL_StatusTypeDef get_calibration_data()
@@ -45,6 +56,9 @@ HAL_StatusTypeDef get_calibration_data()
 
 	// display the calibration data over the uart connection
 	ret = uart_printf("Calibration Data:\r\n");
+	if (ret != HAL_OK)
+		return ret;
+
 	HAL_Delay(10);
 	// print out each calibrated bin value
 	for (i = 0; i < 18; i++) {
@@ -52,7 +66,7 @@ HAL_StatusTypeDef get_calibration_data()
 				410 + 25 * i, sensor_calibration_data[i]);
 		HAL_Delay(10);
 	}
-	ret = uart_printf("------------------------\r\n");
+	return uart_printf("------------------------\r\n");
 }
 
 HAL_StatusTypeDef write_data_to_sd()
@@ -87,7 +101,7 @@ HAL_StatusTypeDef write_data_to_sd()
 	fres = f_mount(&FatFs, "", 1); //1=mount now
 	if (fres != FR_OK) {
 		uart_printf("f_mount error (%i)\r\n", fres);
-		return;
+		return fres;
 	} else {
 		uart_printf("uSD mounted\r\n");
 	}
@@ -95,7 +109,7 @@ HAL_StatusTypeDef write_data_to_sd()
 	fres = f_getfree("", &free_clusters, &getFreeFs);
 	if (fres != FR_OK) {
 		uart_printf("f_getfree error (%i)\r\n", fres);
-		return;
+		return fres;
 	} else {
 		//Formula comes from ChaN's documentation
 		total_sectors = (getFreeFs->n_fatent - 2) * getFreeFs->csize;
@@ -110,7 +124,7 @@ HAL_StatusTypeDef write_data_to_sd()
 		uart_printf("I was able to open '%s' for writing\r\n", sample_file_name);
 	} else {
 		uart_printf("f_open error (%i)\r\n", fres);
-		return;
+		return fres;
 	}
 
 	f_lseek(&fil, f_size(&fil));
@@ -122,7 +136,7 @@ HAL_StatusTypeDef write_data_to_sd()
 			uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, sample_file_name);
 		} else {
 			uart_printf("f_write error (%i)\r\n");
-			return;
+			return fres;
 		}
 		HAL_Delay(10);
 	}
@@ -132,7 +146,7 @@ HAL_StatusTypeDef write_data_to_sd()
 		uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, sample_file_name);
 	} else {
 		uart_printf("f_write error (%i)\r\n");
-		return;
+		return fres;
 	}
 
 	f_close(&fil);
@@ -145,7 +159,7 @@ HAL_StatusTypeDef write_data_to_sd()
 		uart_printf("I was able to open '%s' for writing\r\n", calibration_file_name);
 	} else {
 		uart_printf("f_open error (%i)\r\n", fres);
-		return;
+		return fres;
 	}
 
 	f_lseek(&fil, f_size(&fil));
@@ -167,7 +181,7 @@ HAL_StatusTypeDef write_data_to_sd()
 		uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, calibration_file_name);
 	} else {
 		uart_printf("f_write error (%i)\r\n");
-		return;
+		return fres;
 	}
 
 	//Be a tidy kiwi - don't forget to close your file!
@@ -181,7 +195,7 @@ HAL_StatusTypeDef write_data_to_sd()
 		uart_printf("I was able to open '%s' for writing\r\n", normal_file_name);
 	} else {
 		uart_printf("f_open error (%i)\r\n", fres);
-		return;
+		return fres;
 	}
 
 	f_lseek(&fil, f_size(&fil));
@@ -194,7 +208,7 @@ HAL_StatusTypeDef write_data_to_sd()
 			HAL_Delay(10);
 		} else {
 			uart_printf("f_write error (%i)\r\n");
-			return;
+			return fres;
 		}
 		HAL_Delay(10);
 	}
@@ -203,7 +217,7 @@ HAL_StatusTypeDef write_data_to_sd()
 		uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, normal_file_name);
 	} else {
 		uart_printf("f_write error (%i)\r\n");
-		return;
+		return fres;
 	}
 
 	f_close(&fil);
@@ -214,5 +228,7 @@ HAL_StatusTypeDef write_data_to_sd()
 	f_mount(NULL, "", 0);
 
 	HAL_Delay(200);
+
+	return 0;
 }
 
