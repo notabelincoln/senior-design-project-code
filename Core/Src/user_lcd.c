@@ -9,7 +9,7 @@
 #include "fatfs.h"
 #include <string.h>
 
-void initialize_LCD(){
+int initialize_LCD(){
 	reset_all();
 	//Send function set
 	set_output(5);	//keep high
@@ -39,9 +39,10 @@ void initialize_LCD(){
 	set_output(0);
 	HAL_Delay(1);
 	reset_output(0);
+	return 0;
 }
 
-void display_LCD(float data[18]){
+int display_LCD(float data[18]){
 	int Dom_wavelength;
 	int max=0;
 	int max_idx;
@@ -98,10 +99,11 @@ void display_LCD(float data[18]){
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_RESET);
 	reset_output(0);
 	reset_output(6);
+	return 0;
 }
 
 //pin order: PA0 PB3 PA9 PA10 PA12 PB0 PB1 PF1 (GPIOA_PIN_0 GPIOB_PIN_3 GPIOA_PIN_9 GPIOA_PIN_10 GPIOA_PIN_12 GPIOB_PIN_0 GPIOB_PIN_1 GPIOF_PIN_1)
-void set_output(int pin){
+int set_output(int pin){
 	switch (pin){
 	case(0):
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
@@ -128,9 +130,10 @@ void set_output(int pin){
 			HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_SET);
 			break;
 	}
+	return 0;
 }
 
-void reset_output(int pin){
+int reset_output(int pin){
 	switch (pin){
 	case(0):
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
@@ -157,11 +160,13 @@ void reset_output(int pin){
 			HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_RESET);
 			break;
 	}
+	return 0;
 }
-void reset_all(){
+int reset_all(){
 	for(int i=0;i<8;i++){
 		reset_output(i);
 	}
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
+	return 0;
 }
