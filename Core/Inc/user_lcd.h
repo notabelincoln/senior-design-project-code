@@ -7,10 +7,10 @@
 #define USER_LCD_H
 #include "stm32f3xx_hal.h"
 #include "user_global.h"
-void initialize_LCD();
-void display_LCD(float data[18]);
-void set_output(int pin);
-void reset_output(int pin);
+int initialize_LCD();
+int display_LCD(float data[18]);
+int set_output(int pin);
+int reset_output(int pin);
 
 #define LCD_RS_PIN 8
 #define LCD_RW_PIN 9
