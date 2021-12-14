@@ -12,16 +12,17 @@ void display_LCD(float data[18]);
 void set_output(int pin);
 void reset_output(int pin);
 
-#define LCD_RS 8
-#define LCD_RW 9
-#define LCD_EN 10
-#define LCD_DB0 0
-#define LCD_DB1 1
-#define LCD_DB2 2
-#define LCD_DB3 3
-#define LCD_DB4 4
-#define LCD_DB5 5
-#define LCD_DB6 6
-#define LCD_DB7 7
+#define LCD_RS_PIN 8
+#define LCD_RW_PIN 9
+#define LCD_EN_PIN 10
+
+#define LCD_DB0_PIN 0
+#define LCD_DB1_PIN 1
+#define LCD_DB2_PIN 2
+#define LCD_DB3_PIN 3
+#define LCD_DB4_PIN 4
+#define LCD_DB5_PIN 5
+#define LCD_DB6_PIN 6
+#define LCD_DB7_PIN 7
 
 #endif
