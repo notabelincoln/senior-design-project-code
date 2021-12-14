@@ -9,26 +9,13 @@
 #include "fatfs.h"
 #include <string.h>
 
-TIM_HandleTypeDef htim1;
-
-void display();
-void set_output(int pin);
-void reset_output(int pin);
-void reset_all();
-int __io_putchar(int ch);
-int __io_getchar(void);
-
-
-
 void initialize_LCD(){
 	reset_all();
 	//Send function set
 	set_output(5);	//keep high
 	set_output(4);	//data length 1=8 bit
 	set_output(3);	//display line number 1=2lines
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	HAL_Delay(1);
-	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
 	reset_output(5);
 	reset_output(4);
 	reset_output(3);
@@ -37,9 +24,7 @@ void initialize_LCD(){
 	set_output(1);	//cursor 1=on
 	set_output(2);	//display 1=on
 	set_output(3);	//keep high
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	HAL_Delay(1);
-	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
 	reset_output(0);
 	reset_output(1);
 	reset_output(2);
@@ -47,16 +32,12 @@ void initialize_LCD(){
 	//send entry mode set
 	set_output(1);	//moving direction 1=to the right
 	set_output(2);	//keep high
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	HAL_Delay(1);
-	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
 	reset_output(1);
 	reset_output(2);
 	//send display clear
 	set_output(0);
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	HAL_Delay(1);
-	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
 	reset_output(0);
 }
 
@@ -95,8 +76,6 @@ void display_LCD(float data[18]){
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
 		HAL_Delay(100);
-		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
 		printf("enabled\r\n");
 		//reset pins
 		HAL_Delay(100);
