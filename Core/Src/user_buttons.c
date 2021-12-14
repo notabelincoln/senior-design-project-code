@@ -1,8 +1,11 @@
 #include "user_buttons.h"
 #include "sparkfun_as7265x.h"
+#include "user_math.h"
+#include "fatfs.h"
 
 HAL_StatusTypeDef get_sample_data()
 {
+	HAL_StatusTypeDef ret;
 	// counter and UART string variables
 	uint8_t i;
 
@@ -49,6 +52,7 @@ HAL_StatusTypeDef get_sample_data()
 
 HAL_StatusTypeDef get_calibration_data()
 {
+	HAL_StatusTypeDef ret;
 	// counter and UART string variables
 	uint8_t i;
 
@@ -72,6 +76,7 @@ HAL_StatusTypeDef get_calibration_data()
 
 HAL_StatusTypeDef write_data_to_sd()
 {
+	HAL_StatusTypeDef ret;
 	uint8_t i;
 
 	// file names for the sample data, calibration data, and normalized data
@@ -172,7 +177,7 @@ HAL_StatusTypeDef write_data_to_sd()
 			uart_printf("Wrote %i bytes to '%s'!\r\n", bytesWrote, calibration_file_name);
 		} else {
 			uart_printf("f_write error (%i)\r\n");
-			return;
+			return fres;
 		}
 		HAL_Delay(10);
 	}
@@ -233,3 +238,17 @@ HAL_StatusTypeDef write_data_to_sd()
 	return 0;
 }
 
+HAL_StatusTypeDef uart_printf(const char *fmt, ...) {
+	static char buffer[256];
+	va_list args;
+	static HAL_StatusTypeDef ret;
+
+	va_start(args, fmt);
+	vsnprintf(buffer, sizeof(buffer), fmt, args);
+	va_end(args);
+
+	int len = strlen(buffer);
+	ret = HAL_UART_Transmit(&huart2, (char *)buffer, len, HAL_MAX_DELAY);
+
+	return 0;
+}
