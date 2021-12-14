@@ -1,4 +1,5 @@
 #include "user_buttons.h"
+#include "sparkfun_as7265x.h"
 
 HAL_StatusTypeDef get_sample_data()
 {
