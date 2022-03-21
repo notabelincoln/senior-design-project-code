@@ -125,7 +125,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
-	value = begin(&hi2c1, &huart2);
+	begin(&hi2c1, &huart2);
   /* USER CODE END 2 */
 
   /* Infinite loop */

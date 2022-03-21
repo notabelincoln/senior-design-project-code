@@ -30,7 +30,7 @@
 
 //Initializes the sensor with basic settings
 //Returns false if sensor is not detected
-uint8_t begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
+void begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
 {
 	uint8_t value;
 	char sensor_status[32];

@@ -111,7 +111,8 @@
 #define AS7265X_MEASUREMENT_MODE_6CHAN_CONTINUOUS 0x02
 #define AS7265X_MEASUREMENT_MODE_6CHAN_ONE_SHOT 0x03
 
-uint8_t begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart);
+void begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart);
+
 uint8_t getDeviceType(I2C_HandleTypeDef *hi2c);
 uint8_t getHardwareVersion(I2C_HandleTypeDef *hi2c);
 uint8_t getMajorFirmwareVersion(I2C_HandleTypeDef *hi2c);
