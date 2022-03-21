@@ -53,6 +53,19 @@ extern "C" {
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
+/* Print to serial port */
+HAL_StatusTypeDef uart_printf(UART_HandleTypeDef *huart, const char *fmt, ...);
+
+/* Gather data from sensor array and store it into buffer */
+void get_data_bins(float *float_array, I2C_HandleTypeDef *hi2c);
+
+/* Normalize a set of data */
+void normalize_data(float *data, float *normal_data, float normal_max,
+		float normal_min);
+
+/* Write data to SD card */
+void store_data(float *data, const char *filename, FATFS *fatfs, FIL *fil);
+
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
