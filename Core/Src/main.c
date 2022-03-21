@@ -161,7 +161,114 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+/* Print to serial port */
+HAL_StatusTypeDef uart_printf(UART_HandleTypeDef *huart, const char *fmt, ...)
+{
 
+	static char buffer[256];
+	va_list args;
+	HAL_StatusTypeDef ret;
+
+	va_start(args, fmt);
+	vsnprintf(buffer, sizeof(buffer), fmt, args);
+	va_end(args);
+
+	int len = strlen(buffer);
+	ret = HAL_UART_Transmit(huart, (uint8_t *)buffer, len, HAL_MAX_DELAY);
+
+	return ret;
+}
+
+/* Gather data from sensor array and store it into buffer */
+void get_data_bins(float *float_array, I2C_HandleTypeDef *hi2c)
+{
+	uint8_t i;
+	uint8_t j;
+
+	takeMeasurements(hi2c); //This is a hard wait while all 18 channels are measured
+
+	for (i = 0; i < 3; i++) {
+		enableBulb(bulb[i], hi2c);
+		for (j = 0; j < 6; j++) {
+			float_array[6 * i + j] = getCalibratedValue(sensor_grid[j], spectra[i], hi2c);
+		}
+		disableBulb(bulb[i], hi2c);
+	}
+}
+
+/* Normalize a set of data */
+void normalize_data(float *data, float *normal_data, float normal_max,
+		float normal_min)
+{
+	uint8_t i;
+	float data_max;
+	float data_min;
+
+	data_max = data[0];
+	data_min = data[0];
+
+	for (i = 1; i < SENSOR_DATA_LENGTH; i++) {
+		data_max = (data_max > data[i]) ? data_max : data[i];
+		data_min = (data_min < data[i]) ? data_min : data[i];
+	}
+
+	for (i = 0; i < SENSOR_DATA_LENGTH; i++) {
+		normal_data[i] = ((normal_max - normal_min) * (data[i] - data_min) / \
+				(data_max - data_min)) + data_min;
+	}
+}
+
+/* Write data to SD card */
+void store_data(float *data, const char *filename, FATFS *fatfs, FIL *fil)
+{
+	uint8_t i;
+
+	FRESULT fres; //Result after operations
+	UINT write_res;
+
+	write_res = 0;
+
+	char float_str[32];
+
+	//Open the file system
+	fres = f_mount(fatfs, "", 1); //1=mount now
+	if (fres != FR_OK) {
+		uart_printf(&huart2, "f_mount error (%i)\r\n", fres);
+		return;
+	}
+
+	uart_printf(&huart2, "Writing data to %s...\r\n", filename);
+
+	for (i = 0; i < SENSOR_DATA_LENGTH; i++) {
+		fres = open_append(fil, filename);
+		if (fres == FR_OK) {
+			sprintf(float_str, "%0.3f,", data[i]);
+			uart_printf(&huart2, "Writing value %s to %s\r\n", float_str, filename);
+			f_write(fil, float_str, (UINT)strlen(float_str), &write_res);
+		} else {
+			uart_printf(&huart2, "Error writing data unit %u to %s\r\n", i, filename);
+			return;
+		}
+		f_close(fil);
+	}
+
+	fres = open_append(fil, filename);
+	if (fres == FR_OK) {
+		f_printf(fil, "\n");
+	} else {
+		uart_printf(&huart2, "Error opening %s\r\n", filename);
+		return;
+	}
+
+	fres = f_close(fil);
+	if (fres != FR_OK)
+		uart_printf(&huart2, "Error closing %s\r\n", filename);
+	else
+		uart_printf(&huart2, "Successfully wrote to %s\r\n", filename);
+
+	f_mount(NULL, "", 0);
+	HAL_Delay(100);
+}
 /* USER CODE END 4 */
 
 /**
