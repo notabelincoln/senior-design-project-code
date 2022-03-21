@@ -31,7 +31,6 @@
 
 #include "sparkfun_as7265x.h"
 #include "user_lcd.h"
-#include "user_global.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
