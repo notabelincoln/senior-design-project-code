@@ -192,9 +192,6 @@ uint16_t getChannel(uint8_t channelRegister, uint8_t device, I2C_HandleTypeDef *
 float getCalibratedValue(uint8_t calAddress, uint8_t devic, I2C_HandleTypeDef *hi2ce);
 float convertBytesToFloat(uint32_t myLong);
 
-// get all the data in one fell swoop
-void getDataBins(float *floatArray, I2C_HandleTypeDef *hi2c);
-
 void selectDevice(uint8_t device, I2C_HandleTypeDef *hi2c); //Change between the x51, x52, or x53 for data and settings
 
 uint8_t getTemperature(uint8_t deviceNumber, I2C_HandleTypeDef *hi2c);

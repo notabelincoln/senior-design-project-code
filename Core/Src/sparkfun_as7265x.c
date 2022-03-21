@@ -28,24 +28,6 @@
 #include <stdio.h>
 #include <string.h>
 
-const uint8_t sensor_grid[6] = {
-		AS7265X_R_G_A_CAL,
-		AS7265X_S_H_B_CAL,
-		AS7265X_T_I_C_CAL,
-		AS7265X_U_J_D_CAL,
-		AS7265X_V_K_E_CAL,
-		AS7265X_W_L_F_CAL};
-
-const uint8_t spectra[3] = {
-		AS72653_UV,
-		AS72652_VISIBLE,
-		AS72651_NIR};
-
-const uint8_t bulb[3] = {
-		AS7265x_LED_UV,
-		AS7265x_LED_WHITE,
-		AS7265x_LED_IR};
-
 //Initializes the sensor with basic settings
 //Returns false if sensor is not detected
 uint8_t begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
@@ -351,23 +333,6 @@ float convertBytesToFloat(uint32_t myLong)
 	float myFloat;
 	memcpy(&myFloat, &myLong, 4); //Copy bytes into a float
 	return (myFloat);
-}
-
-// get all the data in one fell swoop
-void getDataBins(float *floatArray, I2C_HandleTypeDef *hi2c)
-{
-	uint8_t i;
-	uint8_t j;
-
-	takeMeasurements(hi2c); //This is a hard wait while all 18 channels are measured
-
-	for (i = 0; i < 3; i++) {
-		enableBulb(bulb[i], hi2c);
-		for (j = 0; j < 6; j++) {
-			floatArray[6 * i + j] = getCalibratedValue(sensor_grid[j], spectra[i], hi2c);
-		}
-		disableBulb(bulb[i], hi2c);
-	}
 }
 
 //Mode 0: 4 channels out of 6 (see datasheet)

@@ -53,8 +53,27 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
 HAL_StatusTypeDef ret;
+
+volatile uint16_t flags = 0;
+
+const uint8_t sensor_grid[6] = {
+		AS7265X_R_G_A_CAL,
+		AS7265X_S_H_B_CAL,
+		AS7265X_T_I_C_CAL,
+		AS7265X_U_J_D_CAL,
+		AS7265X_V_K_E_CAL,
+		AS7265X_W_L_F_CAL};
+
+const uint8_t spectra[3] = {
+		AS72653_UV,
+		AS72652_VISIBLE,
+		AS72651_NIR};
+
+const uint8_t bulb[3] = {
+		AS7265x_LED_UV,
+		AS7265x_LED_WHITE,
+		AS7265x_LED_IR};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
