@@ -132,6 +132,22 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 	while (1)
 	{
+		flags = 0;
+
+		HAL_Delay(1); // Needed to prevent compiler from assuming flags defaults to 0
+
+		switch(flags) {
+		case (GPIO_PIN_4): { // Get sample data and normalize it
+			continue;
+		}
+		case (GPIO_PIN_5): {
+			continue;
+		}
+		case (GPIO_PIN_11): {
+			continue;
+		}
+		default: continue;
+		}
 
     /* USER CODE END WHILE */
 
