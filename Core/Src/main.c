@@ -53,9 +53,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-float sensor_sample_data[SENSOR_DATA_LENGTH] = {0};
-float sensor_calibration_data[SENSOR_DATA_LENGTH] = {0};
-float sensor_sample_normal[SENSOR_DATA_LENGTH] = {0};
+
 HAL_StatusTypeDef ret;
 /* USER CODE END PV */
 
@@ -77,8 +75,9 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint8_t value;
-	uint8_t x;
+	float sample_data[SENSOR_DATA_LENGTH] = {0};
+	float calibration_data[SENSOR_DATA_LENGTH] = {0};
+	float normal_data[SENSOR_DATA_LENGTH] = {0};
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
