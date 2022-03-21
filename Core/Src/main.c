@@ -287,6 +287,22 @@ void store_data(float *data, const char *filename, FATFS *fatfs, FIL *fil)
 	f_mount(NULL, "", 0);
 	HAL_Delay(100);
 }
+
+/* Append data to file */
+FRESULT open_append(FIL* fp, const char* path)
+{
+	FRESULT fr;
+
+	/* Opens an existing file. If not exist, creates a new file. */
+	fr = f_open(fp, path, FA_WRITE | FA_OPEN_ALWAYS);
+	if (fr == FR_OK) {
+		/* Seek to end of the file to append data */
+		fr = f_lseek(fp, f_size(fp));
+		if (fr != FR_OK)
+			f_close(fp);
+	}
+	return fr;
+}
 /* USER CODE END 4 */
 
 /**

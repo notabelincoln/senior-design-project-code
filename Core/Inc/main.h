@@ -66,6 +66,9 @@ void normalize_data(float *data, float *normal_data, float normal_max,
 
 /* Write data to SD card */
 void store_data(float *data, const char *filename, FATFS *fatfs, FIL *fil);
+
+/* Append data to file */
+FRESULT open_append(FIL* fp, const char* path);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
