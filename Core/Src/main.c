@@ -52,8 +52,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-HAL_StatusTypeDef ret;
-
 volatile uint16_t flags = 0;
 
 const uint8_t sensor_grid[6] = {
@@ -93,6 +91,8 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	HAL_StatusTypeDef hal_status;
+
 	float sample_data[SENSOR_DATA_LENGTH] = {0};
 	float calibration_data[SENSOR_DATA_LENGTH] = {0};
 	float normal_data[SENSOR_DATA_LENGTH] = {0};
