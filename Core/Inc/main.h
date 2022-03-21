@@ -32,7 +32,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "fatfs.h"
+#include "ff.h"
 #include <stdarg.h>
 
 /* USER CODE END Includes */
@@ -58,19 +58,6 @@ void Error_Handler(void);
 /* USER CODE BEGIN EFP */
 /* Print to serial port */
 HAL_StatusTypeDef uart_printf(UART_HandleTypeDef *huart, const char *fmt, ...);
-
-/* Gather data from sensor array and store it into buffer */
-void get_data_bins(float *float_array, I2C_HandleTypeDef *hi2c);
-
-/* Normalize a set of data */
-void normalize_data(float *data, float *normal_data, float normal_max,
-		float normal_min);
-
-/* Write data to SD card */
-void store_data(float *data, const char *filename, FATFS *fatfs, FIL *fil);
-
-/* Append data to file */
-FRESULT open_append(FIL* fp, const char* path);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

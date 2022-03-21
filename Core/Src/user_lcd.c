@@ -5,7 +5,6 @@
  ******************************************************************************
  */
 #include "user_lcd.h"
-#include "user_math.h"
 #include "fatfs.h"
 #include <string.h>
 

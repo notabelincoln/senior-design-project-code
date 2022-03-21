@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "fatfs.h"
 #include "i2c.h"
 #include "spi.h"
 #include "usart.h"
@@ -30,7 +31,6 @@
 #include <string.h>
 
 #include "sparkfun_as7265x.h"
-#include "user_lcd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -40,6 +40,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#ifndef SENSOR_DATA_LENGTH
+#define SENSOR_DATA_LENGTH 18
+#endif
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -74,7 +77,18 @@ const uint8_t bulb[3] = {
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+/* Gather data from sensor array and store it into buffer */
+void get_data_bins(float *float_array, I2C_HandleTypeDef *hi2c);
 
+/* Normalize a set of data */
+void normalize_data(float *data, float *normal_data, float normal_max,
+		float normal_min);
+
+/* Write data to SD card */
+void store_data(float *data, const char *filename, FATFS *fatfs, FIL *fil);
+
+/* Append data to file */
+FRESULT open_append(FIL* fp, const char* path);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/

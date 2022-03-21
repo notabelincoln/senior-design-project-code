@@ -29,8 +29,7 @@
 #include <string.h>
 
 //Initializes the sensor with basic settings
-//Returns false if sensor is not detected
-void begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
+uint8_t begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
 {
 	uint8_t value;
 	char sensor_status[32];
@@ -48,12 +47,12 @@ void begin(I2C_HandleTypeDef *hi2c, UART_HandleTypeDef *huart)
 
 	ret = HAL_UART_Transmit(huart, (unsigned char *)buffer, (size_t)strlen(buffer), HAL_MAX_DELAY);
 	if (ret != HAL_OK)
-		return (uint8_t)ret;
+		return 1;
 
 	//Check to see if both slaves are detected
 	value = virtualReadRegister(AS7265X_DEV_SELECT_CONTROL, hi2c);
 	if ((value & 0x30) == 0)
-		return value; //Test if Slave1 and 2 are detected. If not, bail.
+		return 1; //Test if Slave1 and 2 are detected. If not, bail.
 
 	setBulbCurrent(AS7265X_LED_CURRENT_LIMIT_12_5MA, AS7265x_LED_WHITE, hi2c);
 	setBulbCurrent(AS7265X_LED_CURRENT_LIMIT_12_5MA, AS7265x_LED_IR, hi2c);
