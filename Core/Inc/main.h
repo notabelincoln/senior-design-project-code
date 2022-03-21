@@ -53,6 +53,7 @@ extern "C" {
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
+/* USER CODE BEGIN EFP */
 /* Print to serial port */
 HAL_StatusTypeDef uart_printf(UART_HandleTypeDef *huart, const char *fmt, ...);
 
@@ -65,9 +66,6 @@ void normalize_data(float *data, float *normal_data, float normal_max,
 
 /* Write data to SD card */
 void store_data(float *data, const char *filename, FATFS *fatfs, FIL *fil);
-
-/* USER CODE BEGIN EFP */
-
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
