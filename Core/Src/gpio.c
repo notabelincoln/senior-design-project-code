@@ -22,7 +22,7 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
-
+extern volatile uint16_t flags;
 /* USER CODE END 0 */
 
 /*----------------------------------------------------------------------------*/
@@ -109,5 +109,8 @@ void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 2 */
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	flags = GPIO_Pin;
+}
 /* USER CODE END 2 */
