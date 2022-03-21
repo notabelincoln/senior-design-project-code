@@ -91,7 +91,12 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	uint8_t i;
+
 	HAL_StatusTypeDef hal_status;
+
+	FATFS fatfs;
+	FIL fil;
 
 	float sample_data[SENSOR_DATA_LENGTH] = {0};
 	float calibration_data[SENSOR_DATA_LENGTH] = {0};
