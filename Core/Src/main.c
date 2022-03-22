@@ -43,11 +43,17 @@
 #ifndef SENSOR_DATA_LENGTH
 #define SENSOR_DATA_LENGTH 18
 #endif
+
+#ifndef FOLDER_NAME
+#define FOLDER_NAME "capstone-project"
+#endif
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+#ifndef mkstr
+#define mkstr(str)  #str
+#endif
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -85,7 +91,7 @@ void normalize_data(float *data, float *normal_data, float normal_max,
 		float normal_min);
 
 /* Write data to SD card */
-void store_data(float *data, const char *filename, FATFS *fatfs, FIL *fil);
+void store_data(float *data, const char *filename);
 
 /* Append data to file */
 FRESULT open_append(FIL* fp, const char* path);
@@ -106,9 +112,6 @@ int main(void)
 	uint8_t i;
 
 	HAL_StatusTypeDef hal_status;
-
-	FATFS fatfs;
-	FIL fil;
 
 	float sample_data[SENSOR_DATA_LENGTH] = {0};
 	float calibration_data[SENSOR_DATA_LENGTH] = {0};
@@ -157,8 +160,6 @@ int main(void)
 			/* Gather sample data */
 			get_data_bins(sample_data, &hi2c1);
 
-			uart_printf(&huart2, "Sample gathered, normalizing data against calibration data...\r\n");
-
 			/* Normalize the data */
 			normalize_data(sample_data, normal_data, 1, 0);
 
@@ -177,15 +178,31 @@ int main(void)
 			continue;
 		}
 		case (GPIO_PIN_5): {
-			/* Send a signal to the sensor array to gather data */
+			/* Gather calibration data from sensor */
+			uart_printf(&huart2, "Getting calibration data...\r\n");
+
+			/* Gather sample data */
 			get_data_bins(calibration_data, &hi2c1);
+
+			HAL_Delay(10);
+
+			/* Print out each calibrated sample value to UART */
+			for (i = 0; i < SENSOR_DATA_LENGTH; i++) {
+				hal_status = uart_printf(&huart2, "%d nm: %0.3f\r\n", 410 + 25 * i,
+						calibration_data[i]);
+
+				HAL_Delay(10);
+
+				if (hal_status != HAL_OK)
+					break;
+			};
 			continue;
 		}
 		case (GPIO_PIN_11): {
 			HAL_Delay(100);
-			store_data(sample_data, "samples.csv", &fatfs, &fil);
-			store_data(calibration_data, "cal.csv", &fatfs, &fil);
-			store_data(normal_data, "normal.csv", &fatfs, &fil);
+			store_data(sample_data, FOLDER_NAME"/samples.csv");
+			store_data(calibration_data, FOLDER_NAME"/calibration.csv");
+			store_data(normal_data, FOLDER_NAME"/normal.csv");
 			continue;
 		}
 		default: continue;
@@ -300,48 +317,71 @@ void normalize_data(float *data, float *normal_data, float normal_max,
 }
 
 /* Write data to SD card */
-void store_data(float *data, const char *filename, FATFS *fatfs, FIL *fil)
+void store_data(float *data, const char *filename)
 {
 	uint8_t i;
-
+	FATFS fatfs;
+	FIL fil;
 	FRESULT fres; //Result after operations
 	UINT write_res;
 
 	write_res = 0;
 
-	char float_str[32];
+	char float_str[16];
 
 	//Open the file system
-	fres = f_mount(fatfs, "", 1); //1=mount now
+	fres = f_mount(&fatfs, "", 1); //1=mount now
 	if (fres != FR_OK) {
 		uart_printf(&huart2, "f_mount error (%i)\r\n", fres);
 		return;
 	}
 
-	uart_printf(&huart2, "Writing data to %s...\r\n", filename);
+	fres = f_stat("0:/"FOLDER_NAME, NULL);
+	if (fres == FR_NO_FILE) {
+		uart_printf(&huart2, "Attempting to create directory %s...\r\n", FOLDER_NAME);
+		fres = f_mkdir("0:/"FOLDER_NAME);
+		if (fres != FR_OK) {
+			uart_printf(&huart2, "Error creating directory %s\r\n", FOLDER_NAME);
+			return;
+		}
+	}
 
-	for (i = 0; i < SENSOR_DATA_LENGTH; i++) {
-		fres = open_append(fil, filename);
+	uart_printf(&huart2, "Attempting to write data to %s...\r\n", filename);
+
+	for (i = 0; i < SENSOR_DATA_LENGTH - 1; i++) {
+		fres = open_append(&fil, filename);
 		if (fres == FR_OK) {
 			sprintf(float_str, "%0.3f,", data[i]);
 			uart_printf(&huart2, "Writing value %s to %s\r\n", float_str, filename);
-			f_write(fil, float_str, (UINT)strlen(float_str), &write_res);
+			f_write(&fil, float_str, (UINT)strlen(float_str), &write_res);
 		} else {
 			uart_printf(&huart2, "Error writing data unit %u to %s\r\n", i, filename);
 			return;
 		}
-		f_close(fil);
+		f_close(&fil);
 	}
 
-	fres = open_append(fil, filename);
+	fres = open_append(&fil, filename);
 	if (fres == FR_OK) {
-		f_printf(fil, "\n");
+		sprintf(float_str, "%0.3f,", data[SENSOR_DATA_LENGTH]);
+		uart_printf(&huart2, "Writing value %s to %s\r\n", float_str, filename);
+		f_write(&fil, float_str, (UINT)strlen(float_str), &write_res);
+	} else {
+		uart_printf(&huart2, "Error writing data unit %u to %s\r\n", SENSOR_DATA_LENGTH - 1, filename);
+		return;
+	}
+	f_close(&fil);
+
+
+	fres = open_append(&fil, filename);
+	if (fres == FR_OK) {
+		f_printf(&fil, "\n");
 	} else {
 		uart_printf(&huart2, "Error opening %s\r\n", filename);
 		return;
 	}
 
-	fres = f_close(fil);
+	fres = f_close(&fil);
 	if (fres != FR_OK)
 		uart_printf(&huart2, "Error closing %s\r\n", filename);
 	else
