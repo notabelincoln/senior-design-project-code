@@ -5,23 +5,38 @@
  */
 #ifndef USER_LCD_H
 #define USER_LCD_H
-#include "stm32f3xx_hal.h"
+#include "stm32f3xx_hal_gpio.h"
+#include "stm32f303x8.h"
 int initialize_LCD();
 int display_LCD(float data[18]);
 int set_output(int pin);
 int reset_output(int pin);
 
-#define LCD_RS_PIN 8
-#define LCD_RW_PIN 9
-#define LCD_EN_PIN 10
+#define LCD_RS_PORT GPIOA
+#define LCD_RW_PORT GPIOA
+#define LCD_EN_PORT GPIOA
 
-#define LCD_DB0_PIN 0
-#define LCD_DB1_PIN 1
-#define LCD_DB2_PIN 2
-#define LCD_DB3_PIN 3
-#define LCD_DB4_PIN 4
-#define LCD_DB5_PIN 5
-#define LCD_DB6_PIN 6
-#define LCD_DB7_PIN 7
+#define LCD_DB0_PORT GPIOA
+#define LCD_DB1_PORT GPIOB
+#define LCD_DB2_PORT GPIOA
+#define LCD_DB3_PORT GPIOA
+#define LCD_DB4_PORT GPIOA
+#define LCD_DB5_PORT GPIOB
+#define LCD_DB6_PORT GPIOB
+#define LCD_DB7_PORT GPIOF
+
+
+#define LCD_RS_PIN GPIO_PIN_3
+#define LCD_RW_PIN GPIO_PIN_1
+#define LCD_EN_PIN GPIO_PIN_8
+
+#define LCD_DB0_PIN GPIO_PIN_0
+#define LCD_DB1_PIN GPIO_PIN_3
+#define LCD_DB2_PIN GPIO_PIN_9
+#define LCD_DB3_PIN GPIO_PIN_10
+#define LCD_DB4_PIN GPIO_PIN_12
+#define LCD_DB5_PIN GPIO_PIN_0
+#define LCD_DB6_PIN GPIO_PIN_1
+#define LCD_DB7_PIN GPIO_PIN_1
 
 #endif
