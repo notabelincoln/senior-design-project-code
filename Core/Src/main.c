@@ -32,6 +32,7 @@
 #include <string.h>
 
 #include "sparkfun_as7265x.h"
+#include "user_lcd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

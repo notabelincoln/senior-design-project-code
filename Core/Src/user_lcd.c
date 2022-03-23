@@ -5,9 +5,13 @@
  ******************************************************************************
  */
 #include "user_lcd.h"
+#include "tim.h"
+
+static volatile uint8_t row = 0; // identifies row position on LCD
+static volatile uint8_t col = 0; // identifies column position on LCD
 
 /* Set the values for the corresponding lcd pins */
-void lcd_set_pins(uint8_t rs, uint8_t, rw, uint8_t data)
+void lcd_set_pins(uint8_t rs, uint8_t rw, uint8_t data)
 {
 	(rs && 1) ? LCD_PIN_HIGH(RS) : LCD_PIN_LOW(RS);
 	(rw && 1) ? LCD_PIN_HIGH(RW) : LCD_PIN_LOW(RW);
@@ -73,9 +77,9 @@ void lcd_init(void)
 	user_usleep(4200);
 
 	lcd_set_pins(0, 0, 0x30);
-	enable();
+	lcd_enable();
 
-	lcd_user_usleep(100);
+	user_usleep(100);
 
 	lcd_set_pins(0, 0, 0x30);
 	lcd_enable();
@@ -93,22 +97,65 @@ void lcd_init(void)
 	lcd_clear_display();
 
 	lcd_return_home();
+
 }
 
 /* Write a character to the lcd */
 void lcd_write_char(char c)
 {
-	return;
+	if (col == ROW_LENGTH) {
+		col = 0;
+		if (row == 0) {
+			row = 1;
+			lcd_set_ddram_address(0x40);
+		} else if (row == 1) {
+			row = 0;
+			lcd_set_ddram_address(0x00);
+		}
+	}
+
+	if ((c >= '0') && (c <= '9')) {
+		lcd_write_data(c - '0' + 0x30);
+		col++;
+	} else if ((c >= 'a') && (c <= 'z')) {
+		lcd_write_data(c - 'a' + 0x61);
+		col++;
+	} else if ((c >= 'A') && (c <= 'Z')) {
+		lcd_write_data(c - 'A' + 0x41);
+		col++;
+	} else if ((c == ' ')) {
+		lcd_write_data(0x10);
+		col++;
+	} else if (c == '\n') {
+		col = 0;
+		if (row == 0) {
+			row = 1;
+			lcd_set_ddram_address(0x40);
+		} else if (row == 1) {
+			row = 0;
+			lcd_set_ddram_address(0x00);
+		}
+	} else {
+		col++;
+		lcd_write_data(c);
+	}
 }
 
 /* Display an array of data (like a string) to the lcd */
-void lcd_display(uint8_t data, uint8_t size)
+void lcd_display(uint8_t *data, uint8_t size)
 {
-	return;
+	uint8_t i;
+
+	for (i = 0; i < size; i++)
+		lcd_write_char(data[i]);
 }
 
 /* Write a custom character to a rom address in the lcd */
 void custom_char(uint8_t *char_shape, uint8_t address)
 {
-	return;
+	uint8_t i;
+
+	lcd_set_cgram_address(address & 0x07);
+	for (i = 0; i < CHAR_HEIGHT; i++)
+		lcd_write_data(char_shape[i] & 0x1f);
 }
