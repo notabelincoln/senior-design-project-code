@@ -52,9 +52,6 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-#ifndef mkstr
-#define mkstr(str)  #str
-#endif
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
