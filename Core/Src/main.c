@@ -144,6 +144,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim6);
   begin(&hi2c1, &huart2);
+  lcd_init();
+  lcd_display("Hi", 2);
   /* USER CODE END 2 */
 
   /* Infinite loop */

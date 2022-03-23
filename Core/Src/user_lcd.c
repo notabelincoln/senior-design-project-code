@@ -32,7 +32,7 @@ void lcd_read_data(uint8_t data)
 {
 	lcd_set_pins(1, 1, data & 0xff);
 	lcd_enable();
-#if !USE_8PIN
+#if !USE_8PIN // Send two packets of data if in 4-bit mode
 	lcd_set_pins(1, 1, (data << 4) & 0xf0);
 	lcd_enable();
 #endif
@@ -43,7 +43,7 @@ void lcd_write_data(uint8_t data)
 {
 	lcd_set_pins(1, 0, data & 0xff);
 	lcd_enable();
-#if !USE_8PIN
+#if !USE_8PIN // Send two packets of data if in 4-bit mode
 	lcd_set_pins(1, 0, (data << 4) & 0xf0);
 	lcd_enable();
 #endif
@@ -53,7 +53,7 @@ void lcd_write_instruction(uint8_t data)
 {
 	lcd_set_pins(0, 0, data & 0xff);
 	lcd_enable();
-#if !USE_8PIN
+#if !USE_8PIN // Send two packets of data if in 4-bit mode
 	lcd_set_pins(0, 0, (data << 4) & 0xf0);
 	lcd_enable();
 #endif
