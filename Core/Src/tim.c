@@ -96,7 +96,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 /* Wait a length of time equivalent to value in microseconds */
 void user_usleep(uint16_t value)
 {
-	uint16_t time_stamp = __HAL_TIM_GET_COUNTER(&htim16);
-	while ((__HAL_TIM_GET_COUNTER(&htim16) - time_stamp) < value);
+	uint16_t time_stamp = __HAL_TIM_GET_COUNTER(&htim6);
+	while ((__HAL_TIM_GET_COUNTER(&htim6) - time_stamp) < value);
 }
 /* USER CODE END 1 */
