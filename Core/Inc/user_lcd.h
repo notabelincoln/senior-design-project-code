@@ -41,6 +41,30 @@
 #define LCD_PIN_HIGH(pin) LCD_##pin##_PORT |= LCD_##pin## _PIN
 #define LCD_PIN_LOW(pin) LCD_##pin##_PORT &= ~(LCD_##pin##_PIN)
 
+#define lcd_clear_display() \
+        lcd_write_instruction(0x01)
+
+#define lcd_return_home() \
+        lcd_write_instruction(0x02)
+
+#define lcd_entry_mode_set(id, s) \
+        lcd_write_instruction(0x04 | ((id && 1) << 1) | (s && 1))
+
+#define lcd_display_control(d, c, b) \
+        lcd_write_instruction(0x08 | ((d && 1) << 2) | ((c && 1) << 1) | (b && 1))
+
+#define lcd_cursor_shift(sc, rl) \
+        lcd_ write_instruction(0x10 | ((sc && 1) << 3) | ((rl && 1) << 2))
+
+#define lcd_function_set(dl, n, f) \
+        lcd_lcd_write_instruction(0x20 | ((dl && 1) << 4) | ((n && 1) << 3) | ((f && 1) << 2))
+
+#define lcd_set_cgram_address(addr) \
+        lcd_lcd_write_instruction(0x40 | ((addr & 0x07) << 3))
+
+#define lcd_set_ddram_address(addr) \
+        lcd_write_instruction(0x80 | (addr & 0x7f))
+
 /* Function prototypes */
 
 /* Set the values for the corresponding lcd pins */

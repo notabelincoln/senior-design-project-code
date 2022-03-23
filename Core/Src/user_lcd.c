@@ -26,32 +26,32 @@ void lcd_set_pins(uint8_t rs, uint8_t, rw, uint8_t data)
 /* Read data from the lcd ram */
 void lcd_read_data(uint8_t data)
 {
-	set_pins(1, 1, data & 0xff);
-	enable();
+	lcd_set_pins(1, 1, data & 0xff);
+	lcd_enable();
 #if !USE_8PIN
-	set_pins(1, 1, (data << 4) & 0xf0);
-	enable();
+	lcd_set_pins(1, 1, (data << 4) & 0xf0);
+	lcd_enable();
 #endif
 }
 
 /* Write data to lcd ram */
 void lcd_write_data(uint8_t data)
 {
-	set_pins(1, 0, data & 0xff);
-	enable();
+	lcd_set_pins(1, 0, data & 0xff);
+	lcd_enable();
 #if !USE_8PIN
-	set_pins(1, 0, (data << 4) & 0xf0);
-	enable();
+	lcd_set_pins(1, 0, (data << 4) & 0xf0);
+	lcd_enable();
 #endif
 }
 /* Write to lcd instruction register */
 void lcd_write_instruction(uint8_t data)
 {
-	set_pins(0, 0, data & 0xff);
-	enable();
+	lcd_set_pins(0, 0, data & 0xff);
+	lcd_enable();
 #if !USE_8PIN
-	set_pins(0, 0, (data << 4) & 0xf0);
-	enable();
+	lcd_set_pins(0, 0, (data << 4) & 0xf0);
+	lcd_enable();
 #endif
 }
 /* Send enable signal to lcd */
@@ -68,31 +68,31 @@ void lcd_enable(void)
 /* Initialize the lcd */
 void lcd_init(void)
 {
-	set_pins(0, 0, 0x30);
-	enable();
+	lcd_set_pins(0, 0, 0x30);
+	lcd_enable();
 	user_usleep(4200);
 
-	set_pins(0, 0, 0x30);
+	lcd_set_pins(0, 0, 0x30);
 	enable();
 
+	lcd_user_usleep(100);
+
+	lcd_set_pins(0, 0, 0x30);
+	lcd_enable();
 	user_usleep(100);
 
-	set_pins(0, 0, 0x30);
-	enable();
-	user_usleep(100);
+	lcd_set_pins(0, 0, 0x20);
+	lcd_enable();
 
-	set_pins(0, 0, 0x20);
-	enable();
+	lcd_function_set(0, 1, 0);
 
-	function_set(0, 1, 0);
+	lcd_display_control(1, 1, 0);
 
-	display_control(1, 1, 0);
+	lcd_entry_mode_set(1, 0);
 
-	entry_mode_set(1, 0);
+	lcd_clear_display();
 
-	clear_display();
-
-	return_home();
+	lcd_return_home();
 }
 
 /* Write a character to the lcd */
