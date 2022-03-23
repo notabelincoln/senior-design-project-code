@@ -7,7 +7,6 @@
 #include "user_lcd.h"
 #include "tim.h"
 
-static volatile uint8_t row = 0; // identifies row position on LCD
 static volatile uint8_t col = 0; // identifies column position on LCD
 
 /* Set the values for the corresponding lcd pins */
@@ -61,43 +60,42 @@ void lcd_write_instruction(uint8_t data)
 /* Send enable signal to lcd */
 void lcd_enable(void)
 {
-	user_usleep(100);
+	HAL_Delay(1);
 	LCD_PIN_LOW(EN);
-	user_usleep(100);
+	HAL_Delay(1);
 	LCD_PIN_HIGH(EN);
-	user_usleep(100);
+	HAL_Delay(1);
 	LCD_PIN_LOW(EN);
-	user_usleep(100);
+	HAL_Delay(1);
 }
 /* Initialize the lcd */
 void lcd_init(void)
 {
+	HAL_Delay(100);
 	lcd_set_pins(0, 0, 0x30);
 	lcd_enable();
-	user_usleep(4200);
+	HAL_Delay(10);
 
 	lcd_set_pins(0, 0, 0x30);
 	lcd_enable();
 
-	user_usleep(100);
+	HAL_Delay(1);
 
 	lcd_set_pins(0, 0, 0x30);
 	lcd_enable();
-	user_usleep(100);
+	HAL_Delay(1);
 
 	lcd_set_pins(0, 0, 0x20);
 	lcd_enable();
 
-	lcd_function_set(0, 1, 0);
+	lcd_function_set(0, 0, 1);
 
-	lcd_display_control(1, 1, 0);
+	lcd_display_control(1, 0, 0);
 
 	lcd_entry_mode_set(1, 0);
 
 	lcd_clear_display();
-
 	lcd_return_home();
-
 }
 
 /* Write a character to the lcd */
@@ -105,13 +103,7 @@ void lcd_write_char(char c)
 {
 	if (col == ROW_LENGTH) {
 		col = 0;
-		if (row == 0) {
-			row = 1;
-			lcd_set_ddram_address(0x40);
-		} else if (row == 1) {
-			row = 0;
-			lcd_set_ddram_address(0x00);
-		}
+		lcd_set_ddram_address(0x00);
 	}
 
 	if ((c >= '0') && (c <= '9')) {
@@ -128,13 +120,7 @@ void lcd_write_char(char c)
 		col++;
 	} else if (c == '\n') {
 		col = 0;
-		if (row == 0) {
-			row = 1;
-			lcd_set_ddram_address(0x40);
-		} else if (row == 1) {
-			row = 0;
-			lcd_set_ddram_address(0x00);
-		}
+		lcd_set_ddram_address(20);
 	} else {
 		col++;
 		lcd_write_data(c);

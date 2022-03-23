@@ -109,8 +109,11 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	uint8_t i;
+	uint8_t j;
 
 	HAL_StatusTypeDef hal_status;
+
+	uint8_t display_data[8] = {0};
 
 	float sample_data[SENSOR_DATA_LENGTH] = {0};
 	float calibration_data[SENSOR_DATA_LENGTH] = {0};
@@ -145,7 +148,15 @@ int main(void)
   HAL_TIM_Base_Start(&htim6);
   begin(&hi2c1, &huart2);
   lcd_init();
-  lcd_display("Hi", 2);
+  for ( i = 0; i < 8; i++) {
+	  lcd_set_cgram_address((i + 1));
+	  for (j = 0; j < i; j++)
+		  lcd_write_data(0x00);
+	  for(j = i; j < CHAR_HEIGHT; j++)
+		  lcd_write_data(0xff);
+  }
+  lcd_set_ddram_address(0);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -178,6 +189,8 @@ int main(void)
 				if (hal_status != HAL_OK)
 					break;
 			};
+
+			lcd_display((uint8_t *)"Hello", 5);
 			continue;
 		}
 		case (GPIO_PIN_5): {

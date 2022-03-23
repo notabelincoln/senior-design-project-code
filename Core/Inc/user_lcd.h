@@ -45,8 +45,8 @@
 #define USE_8PIN 0
 
 /* Macros */
-#define LCD_PIN_HIGH(pin) ((LCD_EN_PORT->ODR) |= (LCD_EN_PIN))
-#define LCD_PIN_LOW(pin) ((LCD_EN_PORT->ODR) &= ~(LCD_EN_PIN))
+#define LCD_PIN_HIGH(pin) ((LCD_##pin##_PORT->ODR) |= (LCD_##pin##_PIN))
+#define LCD_PIN_LOW(pin) ((LCD_##pin##_PORT->ODR) &= ~(LCD_##pin##_PIN))
 
 #define lcd_clear_display() \
         lcd_write_instruction(0x01)
