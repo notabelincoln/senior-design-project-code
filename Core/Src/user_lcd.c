@@ -74,11 +74,10 @@ void lcd_init(void)
 	HAL_Delay(100);
 	lcd_set_pins(0, 0, 0x30);
 	lcd_enable();
-	HAL_Delay(10);
+	HAL_Delay(5);
 
 	lcd_set_pins(0, 0, 0x30);
 	lcd_enable();
-
 	HAL_Delay(1);
 
 	lcd_set_pins(0, 0, 0x30);
@@ -88,9 +87,9 @@ void lcd_init(void)
 	lcd_set_pins(0, 0, 0x20);
 	lcd_enable();
 
-	lcd_function_set(0, 0, 1);
+	lcd_function_set(0, 0, 0);
 
-	lcd_display_control(1, 0, 0);
+	lcd_display_control(1, 1, 0);
 
 	lcd_entry_mode_set(1, 0);
 
@@ -115,7 +114,7 @@ void lcd_write_char(char c)
 	} else if ((c >= 'A') && (c <= 'Z')) {
 		lcd_write_data(c - 'A' + 0x41);
 		col++;
-	} else if ((c == ' ')) {
+	} else if ((c == ' ') || (c == 0)) {
 		lcd_write_data(0x10);
 		col++;
 	} else if (c == '\n') {
