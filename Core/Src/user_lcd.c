@@ -5,7 +5,6 @@
  ******************************************************************************
  */
 #include "user_lcd.h"
-#include "tim.h"
 
 static volatile uint8_t col = 0; // identifies column position on LCD
 
