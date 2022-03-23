@@ -141,7 +141,8 @@ int main(void)
   MX_FATFS_Init();
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
-	begin(&hi2c1, &huart2);
+  HAL_TIM_Base_Start(&htim6);
+  begin(&hi2c1, &huart2);
   /* USER CODE END 2 */
 
   /* Infinite loop */

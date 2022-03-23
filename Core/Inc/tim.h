@@ -41,7 +41,8 @@ extern TIM_HandleTypeDef htim6;
 void MX_TIM6_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+/* Wait a length of time equivalent to value in microseconds */
+void user_usleep(uint16_t value);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
