@@ -152,7 +152,7 @@ int main(void)
 
 	/* Setting custom characters for readout */
 	for ( i = 0; i < 8; i++) {
-		lcd_set_cgram_address(i + 1);
+		lcd_set_cgram_address(7 - i);
 		for (j = 0; j < i; j++)
 			lcd_write_data(0x00);
 		for(j = i; j < CHAR_HEIGHT; j++)
@@ -329,19 +329,16 @@ void normalize_data(float *data, float *normal_data, float normal_max,
 {
 	uint8_t i;
 	float data_max;
-	float data_min;
 
 	data_max = data[0];
-	data_min = data[0];
 
 	for (i = 1; i < SENSOR_DATA_LENGTH; i++) {
 		data_max = (data_max > data[i]) ? data_max : data[i];
-		data_min = (data_min < data[i]) ? data_min : data[i];
 	}
 
 	for (i = 0; i < SENSOR_DATA_LENGTH; i++) {
-		normal_data[i] = ((normal_max - normal_min) * (data[i] - data_min) / \
-				(data_max - data_min)) + normal_min;
+		normal_data[i] = (normal_max - normal_min) * (data[i] / data_max) \
+				+ normal_min;
 	}
 }
 
@@ -443,7 +440,6 @@ void set_display_data(float *data, uint8_t *display_data)
 	uint8_t j;
 
 	float data_max;
-	float data_min;
 
 	float tmp_sum;
 	float tmp_array[8] = {0};
@@ -461,12 +457,10 @@ void set_display_data(float *data, uint8_t *display_data)
 
 	for (i = 1; i < 8; i++) {
 		data_max = (data_max > tmp_array[i]) ? data_max : tmp_array[i];
-		data_min = (data_min < tmp_array[i]) ? data_min : tmp_array[i];
 	}
 
 	for (i = 0; i < 8; i++) {
-		display_data[i] = 16 - (uint8_t)(16 * (tmp_array[i] - data_min) / \
-				(data_max - data_min));
+		display_data[i] = (uint8_t)(8 * (tmp_array[i] / data_max));
 	}
 }
 /* USER CODE END 4 */

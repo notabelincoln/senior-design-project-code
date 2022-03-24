@@ -99,7 +99,7 @@ void lcd_init(void)
 /* Write a character to the lcd */
 void lcd_write_char(char c)
 {
-	if (col == ROW_LENGTH) {
+	if (col >= ROW_LENGTH) {
 		col = 0;
 		lcd_set_ddram_address(0x00);
 	}
@@ -121,7 +121,7 @@ void lcd_write_char(char c)
 		lcd_set_ddram_address(20);
 	} else {
 		col++;
-		lcd_write_data(c);
+		lcd_write_data(c - 1);
 	}
 }
 
