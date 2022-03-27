@@ -129,7 +129,7 @@ int main(void)
 	HAL_Init();
 
 	/* USER CODE BEGIN Init */
-	HAL_Delay(669); // give the peripherals time to power on
+	HAL_Delay(690); // give the peripherals time to power on
 
 	/* USER CODE END Init */
 
