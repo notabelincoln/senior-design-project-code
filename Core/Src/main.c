@@ -353,7 +353,7 @@ void store_data(float *data, const char *filename)
 
 	write_res = 0;
 
-	char float_str[16];
+	char float_str[128];
 
 	//Open the file system
 	fres = f_mount(&fatfs, "", 1); //1=mount now
@@ -377,7 +377,7 @@ void store_data(float *data, const char *filename)
 	for (i = 0; i < SENSOR_DATA_LENGTH - 1; i++) {
 		fres = open_append(&fil, filename);
 		if (fres == FR_OK) {
-			sprintf(float_str, "%0.3f,", data[i]);
+			sprintf(float_str, "%f,", data[i]);
 			uart_printf(&huart2, "Writing value %s to %s\r\n", float_str, filename);
 			f_write(&fil, float_str, (UINT)strlen(float_str), &write_res);
 		} else {
