@@ -152,7 +152,7 @@ int main(void)
 
 	/* Setting custom characters for readout */
 	for ( i = 0; i < 8; i++) {
-		lcd_set_cgram_address(7 - i);
+		lcd_set_cgram_address((7 - i));
 		for (j = 0; j < i; j++)
 			lcd_write_data(0x00);
 		for(j = i; j < CHAR_HEIGHT; j++)
@@ -389,7 +389,7 @@ void store_data(float *data, const char *filename)
 
 	fres = open_append(&fil, filename);
 	if (fres == FR_OK) {
-		sprintf(float_str, "%0.3f,", data[SENSOR_DATA_LENGTH]);
+		sprintf(float_str, "%f", data[SENSOR_DATA_LENGTH]);
 		uart_printf(&huart2, "Writing value %s to %s\r\n", float_str, filename);
 		f_write(&fil, float_str, (UINT)strlen(float_str), &write_res);
 	} else {
@@ -439,16 +439,16 @@ void set_display_data(float *data, uint8_t *display_data)
 	uint8_t i;
 	uint8_t j;
 
-	float tmp_sum;
+	float tmp;
 	float data_max;
 	float tmp_array[8] = {0};
 
 	// get average over floating 4-value window
 	for (i = 0; i < 8; i++) {
-		tmp_sum = 0;
+		tmp = 0;
 		for (j = 0; j < 4; j++)
-			tmp_sum += data[2*i + j];
-		tmp_array[i] = tmp_sum / 4;
+			tmp += data[2*i + j];
+		tmp_array[i] = tmp / 4;
 	}
 
 	// Calculate maximum of averaged data
@@ -457,8 +457,18 @@ void set_display_data(float *data, uint8_t *display_data)
 	}
 
 	// Normalize display data
-	for (i = 0; i < 8; i++) {
-		display_data[i] = (uint8_t)(8 * tmp_array[i] / data_max);
+	if (data_max == 0) {
+		for (i = 0; i < 8; i++) {
+			display_data[i] = 0;
+		}
+	} else {
+		for (i = 0; i < 8; i++) {
+			tmp = 8 * tmp_array[i] / data_max;
+			if ((tmp < 1) && (tmp > 0))
+				display_data[i] = (uint8_t)(tmp + 1);
+			else
+				display_data[i] = (uint8_t)tmp;
+		}
 	}
 }
 /* USER CODE END 4 */
