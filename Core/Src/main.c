@@ -309,10 +309,8 @@ HAL_StatusTypeDef uart_printf(UART_HandleTypeDef *huart, const char *fmt, ...)
 /* Gather data from sensor array and store it into buffer */
 void get_data_bins(float *float_array, I2C_HandleTypeDef *hi2c)
 {
-	uint8_t i;
-	uint8_t j;
-
-	takeMeasurements(hi2c); //This is a hard wait while all 18 channels are measured
+	disableIndicator(hi2c);
+	//takeMeasurements(hi2c); //This is a hard wait while all 18 channels are measured
 	
 	enableBulb(AS7265x_LED_UV, hi2c);
 	float_array[0] = getCalibratedA(hi2c);
@@ -340,6 +338,8 @@ void get_data_bins(float *float_array, I2C_HandleTypeDef *hi2c)
 	float_array[16] = getCalibratedK(hi2c);
 	float_array[17] = getCalibratedL(hi2c);
 	disableBulb(AS7265x_LED_IR, hi2c);
+
+	enableIndicator(hi2c);
 }
 
 /* Normalize a set of data */
