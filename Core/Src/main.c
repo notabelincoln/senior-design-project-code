@@ -310,34 +310,35 @@ HAL_StatusTypeDef uart_printf(UART_HandleTypeDef *huart, const char *fmt, ...)
 void get_data_bins(float *float_array, I2C_HandleTypeDef *hi2c)
 {
 	disableIndicator(hi2c);
-	//takeMeasurements(hi2c); //This is a hard wait while all 18 channels are measured
+	HAL_Delay(5);
+	takeMeasurementsWithBulb(hi2c); //This is a hard wait while all 18 channels are measured
 	
-	enableBulb(AS7265x_LED_UV, hi2c);
+	//enableBulb(AS7265x_LED_UV, hi2c);
 	float_array[0] = getCalibratedA(hi2c);
 	float_array[1] = getCalibratedB(hi2c);
 	float_array[2] = getCalibratedC(hi2c);
 	float_array[3] = getCalibratedD(hi2c);
 	float_array[4] = getCalibratedE(hi2c);
 	float_array[5] = getCalibratedF(hi2c);
-	disableBulb(AS7265x_LED_UV, hi2c);
+	//disableBulb(AS7265x_LED_UV, hi2c);
 	
-	enableBulb(AS7265x_LED_WHITE, hi2c);
+	//enableBulb(AS7265x_LED_WHITE, hi2c);
 	float_array[6] = getCalibratedG(hi2c);
 	float_array[7] = getCalibratedH(hi2c);
 	float_array[8] = getCalibratedR(hi2c);
 	float_array[9] = getCalibratedI(hi2c);
 	float_array[10] = getCalibratedS(hi2c);
 	float_array[11] = getCalibratedJ(hi2c);
-	disableBulb(AS7265x_LED_WHITE, hi2c);
+	//disableBulb(AS7265x_LED_WHITE, hi2c);
 	
-	enableBulb(AS7265x_LED_IR, hi2c);
+	//enableBulb(AS7265x_LED_IR, hi2c);
 	float_array[12] = getCalibratedT(hi2c);
 	float_array[13] = getCalibratedU(hi2c);
 	float_array[14] = getCalibratedV(hi2c);
 	float_array[15] = getCalibratedW(hi2c);
 	float_array[16] = getCalibratedK(hi2c);
 	float_array[17] = getCalibratedL(hi2c);
-	disableBulb(AS7265x_LED_IR, hi2c);
+	//disableBulb(AS7265x_LED_IR, hi2c);
 
 	enableIndicator(hi2c);
 }
